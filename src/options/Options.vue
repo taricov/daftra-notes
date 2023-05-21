@@ -18,15 +18,15 @@ import notes from '../fakedata'
       <div>Options</div> -->
 
       <!-- <input v-model="storageDemo" class="border border-gray-400 rounded px-2 py-1 mt-2"> -->
-      <v-container class="bg-slate-100 bg-opacity-5">
+      <v-container class="!bg-slate-100 !bg-opacity-2">
         <v-row no-gutters>
           <v-col
-            v-for="n in 3"
-            :key="n"
+            v-for="note in notes"
+            :key="note.id"
             cols="12"
             sm="4"
           >
-            <VCard v-for="note in notes" :key="note.id" class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+            <VCard class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
           </v-col>
         </v-row>
       </v-container>
