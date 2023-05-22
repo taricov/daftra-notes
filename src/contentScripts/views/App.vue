@@ -82,18 +82,18 @@ function openOptionsPage() {
         <v-container class="!bg-slate-100 !bg-opacity-2">
           <v-row no-gutters>
             <v-col
-              v-for="note in notes"
+              v-for="note in notes.slice(0, 6)"
               :key="note.id"
               cols="6"
               sm="4"
             >
               <!-- <VCard class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
-              <vue-compact class="m-2" :body="note.body" />
+              <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
             </v-col>
           </v-row>
 
-          <v-text size="x-small" class="text-sm underline hover:opacity-50 text-sky-100 bg-opacity-1 mx-3 cursor-pointer transition duration-300 font-normal" @click="openOptionsPage">
-            Go to all notes
+          <v-text size="x-small" class="text-xs hover:opacity-50 text-sky-100 bg-opacity-1 mx-3 cursor-pointer transition duration-300 font-normal" @click="openOptionsPage">
+            Go to all notes..
           </v-text>
         </v-container>
       </v-container>
@@ -121,6 +121,6 @@ function openOptionsPage() {
   position: fixed
 }
 .v-navigation-drawer__content{
-  @apply flex-col justify-between overflow-hidden;
+  @apply !flex flex-col justify-between overflow-hidden;
 }
 </style>

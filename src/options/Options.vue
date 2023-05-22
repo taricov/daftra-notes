@@ -21,7 +21,7 @@ import notes from '../fakedata'
       <v-container class="!bg-slate-100 !bg-opacity-2">
         <v-row no-gutters>
           <v-col
-            v-for="note in notes.slice(1, 6)"
+            v-for="note in notes"
             :key="note.id"
             cols="12"
             sm="4"
