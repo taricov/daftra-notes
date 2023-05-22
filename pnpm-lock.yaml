@@ -36,6 +36,9 @@ devDependencies:
   '@mdi/font':
     specifier: ^7.2.96
     version: 7.2.96
+  '@types/chrome':
+    specifier: ^0.0.236
+    version: 0.0.236
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -104,7 +107,7 @@ devDependencies:
     version: 4.9.5
   unocss:
     specifier: ^0.50.4
-    version: 0.50.4(postcss@8.4.21)(vite@4.1.4)
+    version: 0.50.4(postcss@8.4.23)(vite@4.1.4)
   unplugin-auto-import:
     specifier: ^0.15.1
     version: 0.15.1(@vueuse/core@9.13.0)
@@ -1075,8 +1078,25 @@ packages:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
 
+  /@types/chrome@0.0.236:
+    resolution: {integrity: sha512-ArQoxO9WtDY6GWcT2cpo+D+hyASPeFt7PHQEUDXwQhRS00Rbop07rnEOA046yws0HkM83Tcew/hW6Dgvnj4iMQ==}
+    dependencies:
+      '@types/filesystem': 0.0.32
+      '@types/har-format': 1.2.10
+    dev: true
+
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+    dev: true
+
+  /@types/filesystem@0.0.32:
+    resolution: {integrity: sha512-Yuf4jR5YYMR2DVgwuCiP11s0xuVRyPKmz8vo6HBY3CGdeMj8af93CFZX+T82+VD1+UqHOxTq31lO7MI7lepBtQ==}
+    dependencies:
+      '@types/filewriter': 0.0.29
+    dev: true
+
+  /@types/filewriter@0.0.29:
+    resolution: {integrity: sha512-BsPXH/irW0ht0Ji6iw/jJaK8Lj3FJemon2gvEqHKpCdDCeemHa+rI3WBGq5z7cDMZgoLjY40oninGxqk+8NzNQ==}
     dev: true
 
   /@types/fs-extra@11.0.1:
@@ -1084,6 +1104,10 @@ packages:
     dependencies:
       '@types/jsonfile': 6.1.1
       '@types/node': 18.14.6
+    dev: true
+
+  /@types/har-format@1.2.10:
+    resolution: {integrity: sha512-o0J30wqycjF5miWDKYKKzzOU1ZTLuA42HZ4HE7/zqTOc/jTLdQ5NhYWvsRQo45Nfi1KHoRdNhteSI4BAxTF1Pg==}
     dev: true
 
   /@types/http-cache-semantics@4.0.1:
@@ -1355,7 +1379,7 @@ packages:
       sirv: 2.0.2
     dev: true
 
-  /@unocss/postcss@0.50.4(postcss@8.4.21):
+  /@unocss/postcss@0.50.4(postcss@8.4.23):
     resolution: {integrity: sha512-Gri+EqIOs/yKk0YHel5XLHQCRD1BzKdQHF82zizJUyqaRStR2qvR8ECInYsirXL/eUEvx2zT8iQKCXkiApTuQw==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -1366,7 +1390,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.2.12
       magic-string: 0.30.0
-      postcss: 8.4.21
+      postcss: 8.4.23
     dev: true
 
   /@unocss/preset-attributify@0.50.4:
@@ -5690,7 +5714,6 @@ packages:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-    dev: false
 
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
@@ -6345,7 +6368,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: false
 
   /prelude-ls@1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
@@ -7636,7 +7658,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unocss@0.50.4(postcss@8.4.21)(vite@4.1.4):
+  /unocss@0.50.4(postcss@8.4.23)(vite@4.1.4):
     resolution: {integrity: sha512-9offjUEwVlAkR//0sidTyvKkSArRGkDdgSFeW4P4005GWnjmXnbx4amuAeS3Au4o8WoshZCCOi5EYrpO4aLdfg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -7648,7 +7670,7 @@ packages:
       '@unocss/astro': 0.50.4(vite@4.1.4)
       '@unocss/cli': 0.50.4
       '@unocss/core': 0.50.4
-      '@unocss/postcss': 0.50.4(postcss@8.4.21)
+      '@unocss/postcss': 0.50.4(postcss@8.4.23)
       '@unocss/preset-attributify': 0.50.4
       '@unocss/preset-icons': 0.50.4
       '@unocss/preset-mini': 0.50.4

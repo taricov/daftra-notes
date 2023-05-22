@@ -50,7 +50,12 @@ whenever(keys['='], () => {
 // */
 // }
 function openOptionsPage() {
-  browser.runtime.openOptionsPage()
+  // chrome.runtime.openOptionsPage();
+  if (chrome.runtime.openOptionsPage)
+    chrome.runtime.openOptionsPage()
+
+  else
+    window.open(chrome.runtime.getURL('options.html'))
 }
 </script>
 
@@ -95,6 +100,9 @@ function openOptionsPage() {
           <v-text size="x-small" class="text-xs hover:opacity-50 text-sky-100 bg-opacity-1 mx-3 cursor-pointer transition duration-300 font-normal" @click="openOptionsPage">
             Go to all notes..
           </v-text>
+          <button class="btn mt-2" @click="openOptionsPage">
+            Options
+          </button>
         </v-container>
       </v-container>
       <v-container fluid>

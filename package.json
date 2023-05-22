@@ -30,6 +30,7 @@
     "@ffflorian/jszip-cli": "^3.1.9",
     "@iconify/json": "^2.2.31",
     "@mdi/font": "^7.2.96",
+    "@types/chrome": "^0.0.236",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.14.6",
     "@types/webextension-polyfill": "^0.10.0",
