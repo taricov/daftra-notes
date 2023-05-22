@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import '../styles'
 import 'vuetify/styles'
-import 'element-plus/dist/index.css'
+// import 'element-plus/dist/index.css'
 
-import ElementPlus from 'element-plus'
+// import ElementPlus from 'element-plus'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -18,5 +18,5 @@ const vuetify = createVuetify({
 const app = createApp(App)
 setupApp(app)
 app.use(vuetify)
-app.use(ElementPlus)
+// app.use(ElementPlus)
 app.mount('#app')

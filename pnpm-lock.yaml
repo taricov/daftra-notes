@@ -30,6 +30,9 @@ devDependencies:
   '@iconify/json':
     specifier: ^2.2.31
     version: 2.2.31
+  '@mdi/font':
+    specifier: ^7.2.96
+    version: 7.2.96
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -911,6 +914,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
+  /@mdi/font@7.2.96:
+    resolution: {integrity: sha512-e//lmkmpFUMZKhmCY9zdjRe4zNXfbOIJnn6xveHbaV2kSw5aJ5dLXUxcRt1Gxfi7ZYpFLUWlkG2MGSFAiqAu7w==}
     dev: true
 
   /@mdn/browser-compat-data@5.2.29:
