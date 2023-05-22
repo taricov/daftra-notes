@@ -70,7 +70,7 @@ whenever(keys['='], () => {
   <v-layout>
     <v-navigation-drawer
       v-model="drawer"
-      width="800"
+      width="600"
       elevation="9"
       location="right"
       temporary
@@ -80,7 +80,19 @@ whenever(keys['='], () => {
         <h3 class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 mb-4 text-xl font-extrabold md:text-xl lg:text-6xl dark:text-white">
           Recent Notes
         </h3>
-        <VCardCompact v-for="note in notes" :key="note.id" class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+        <v-container class="!bg-slate-100 !bg-opacity-2">
+          <v-row no-gutters>
+            <v-col
+              v-for="note in notes"
+              :key="note.id"
+              cols="6"
+              sm="4"
+            >
+              <!-- <VCard class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
+              <v-card-compact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+            </v-col>
+          </v-row>
+        </v-container>
       </v-container>
       <v-container fluid>
         <v-textarea
@@ -94,3 +106,9 @@ whenever(keys['='], () => {
     </v-navigation-drawer>
   </v-layout>
 </template>
+
+<style>
+.v-navigation-drawer__scrim{
+  position: fixed
+}
+</style>

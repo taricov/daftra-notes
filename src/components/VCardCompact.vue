@@ -12,7 +12,7 @@ defineProps({
     variant="tonal"
     class="!bg-slate-900 !text-slate-300 !transition-all duration-300 shadow-lg hover:-translate-y-1 transform px-1"
   >
-    <p class="text-md font-semibold">
+    <!-- <p class="text-md font-semibold">
       {{ author }}
     </p>
     <p class="italic hover:opacity-100 opacity-50 transition duration-300">
@@ -20,7 +20,7 @@ defineProps({
     </p>
     <v-chip class="text-md my-2 ">
       {{ date }}
-    </v-chip>
+    </v-chip> -->
     <p class="text-md px-3 py-2">
       {{ body }}
     </p>
