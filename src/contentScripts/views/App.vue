@@ -2,22 +2,25 @@
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import notes from '../../fakedata'
+import { filteredNotes, getNotes } from '../../logic/getNotes'
+import type { Note } from '../../logic/getNotes'
+
+const tabs = ref<any>(null)
+const filtered = ref<Note[]>([])
 
 const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
-const siteDomain = ref<string>('taricov')
-// const noteLocalEntity = ref<string>('')
-// const siteInfo = ref<object | null>(null)
+const siteDomain = ref<any>('taricov')
 
-onMounted(async () => {
-  const siteData = await fetch(`https://${siteDomain}.daftra.com/api2/site_info`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': apiKey,
-    },
-  })
-  const data = await siteData.json()
-  // siteInfo.value =
-  console.log(data)
+// const siteInfo = ref<object | null>(null)
+// const thisPagePath: string = window.location.pathname
+
+filtered.value = filteredNotes(notes)
+onMounted(() => {
+  // const filterNotes = (thisPagePath) => {
+
+  //   console.log(thisPagePath)
+  // }
+  getNotes(siteDomain, apiKey)
 })
 
 const textarea = ref<HTMLTextAreaElement>()
@@ -31,9 +34,9 @@ const toggleDrawer = (): void => {
 const addNote = (e: any): void => {
   // console.log('add note btn clicked: ', newNote.value)
   if (e.key === 'enter')
-    console.log('add note btn')
+  // console.log('add note btn')
 
-  alert(JSON.stringify(newNote.value, null, 2))
+    alert(JSON.stringify(newNote.value, null, 2))
 }
 
 const keys = useMagicKeys()
@@ -49,14 +52,14 @@ whenever(keys['='], () => {
 //   /* eslint-disable-next-line
 // */
 // }
-function openOptionsPage() {
-  // chrome.runtime.openOptionsPage();
-  if (chrome.runtime.openOptionsPage)
-    chrome.runtime.openOptionsPage()
+// function openOptionsPage() {
+// chrome.runtime.openOptionsPage();
+//   if (chrome.runtime.openOptionsPage)
+//     chrome.runtime.openOptionsPage()
 
-  else
-    window.open(chrome.runtime.getURL('options.html'))
-}
+//   else
+//     window.open(chrome.runtime.getURL('options.html'))
+// }
 </script>
 
 <template>
@@ -84,26 +87,60 @@ function openOptionsPage() {
         <v-chip variant="tonal" class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 px-0 mb-4 text-xl font-extrabold  dark:text-white">
           Free and Open Source Tool
         </v-chip>
-        <v-container class="!bg-slate-100 !bg-opacity-2">
-          <v-row no-gutters>
-            <v-col
-              v-for="note in notes.slice(0, 6)"
-              :key="note.id"
-              cols="6"
-              sm="4"
-            >
-              <!-- <VCard class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
-              <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
-            </v-col>
-          </v-row>
-
-          <v-text size="x-small" class="text-xs hover:opacity-50 text-sky-100 bg-opacity-1 mx-3 cursor-pointer transition duration-300 font-normal" @click="openOptionsPage">
+        <v-tabs
+          v-model="tabs"
+          fixed-tabs
+          bg-color="blue"
+        >
+          <v-tab value="recently-added">
+            Recently Added
+          </v-tab>
+          <v-tab value="page-notes">
+            Page Notes
+          </v-tab>
+        </v-tabs>
+        <v-window v-model="tabs">
+          <v-window-item
+            value="page-notes"
+          >
+            <v-container class="!bg-slate-100 !bg-opacity-2">
+              <v-row no-gutters>
+                <v-col
+                  v-for="note in filtered.slice(0, 2)"
+                  :key="note.id"
+                  cols="6"
+                  sm="4"
+                >
+                  <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-window-item>
+          <v-window-item
+            value="recently-added"
+          >
+            <v-container class="!bg-slate-100 !bg-opacity-2">
+              <v-row no-gutters>
+                <v-col
+                  v-for="note in notes.slice(0, 6)"
+                  :key="note.id"
+                  cols="6"
+                  sm="4"
+                >
+                  <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-window-item>
+        </v-window>
+        <!-- <v-container class="!bg-slate-100 !bg-opacity-2"> -->
+        <!-- <v-text size="x-small" class="text-xs hover:opacity-50 text-sky-100 bg-opacity-1 mx-3 cursor-pointer transition duration-300 font-normal" @click="openOptionsPage">
             Go to all notes..
           </v-text>
           <button class="btn mt-2" @click="openOptionsPage">
             Options
-          </button>
-        </v-container>
+          </button> -->
+        <!-- </v-container> -->
       </v-container>
       <v-container fluid>
         <form @submit.prevent="addNote">
