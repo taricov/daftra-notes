@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import ElementPlus from 'element-plus'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -38,6 +37,5 @@ import { setupApp } from '~/logic/common-setup'
   setupApp(app)
 
   app.use(vuetify)
-  app.use(ElementPlus)
   app.mount(root)
 })()

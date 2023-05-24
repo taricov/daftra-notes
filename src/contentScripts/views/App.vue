@@ -26,9 +26,7 @@ const toggleDrawer = (): void => {
   textarea.value?.focus()
 }
 const addNote = (e: any): void => {
-  // console.log('add note btn clicked: ', newNote.value)
   if (e.key === 'enter')
-  // console.log('add note btn')
 
     alert(JSON.stringify(newNote.value))
 }
