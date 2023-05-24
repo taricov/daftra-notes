@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DeleteNote, UpdateNote } from '~/logic/daftraApi'
 defineProps({
+  num: Number,
   path: String,
   author: String,
   body: String,
@@ -16,7 +17,7 @@ let editedNote: any
     class="group !bg-slate-900 !text-slate-300 !transition-all duration-300 shadow-lg hover:-translate-y-1 transform !z-10"
   >
     <div class="group-hover:opacity-100 opacity-30 mt-4 transition duration-300">
-      Note No. 342
+      Note No. {{ num }}
     </div>
     <v-container class="hover:-translate-x-18 transition duration-300 overflow-hidden trasform absolute !w-fit -right-19 space-y-3 !p-0 bg-slate-50 bg-opacity-5 rounded flex items-center justify-center sapce-x-10 before:content-[''] before:w-2 before:h-8 before:bg-emerald-600">
       <svg class="mx-3 cursor-pointer transition duration-150 hover:fill-emerald-600 fill-sky-400 w-5 p-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" @click="DeleteNote('0')"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>
@@ -30,7 +31,7 @@ let editedNote: any
       <p class="italic hover:opacity-100 opacity-50 transition duration-300">
         {{ path }}
       </p>
-      <v-chip class="text-md my-2 ">
+      <v-chip class="text-md my-2">
         {{ date }}
       </v-chip>
       <p class="text-md px-3 py-2">
@@ -44,23 +45,4 @@ let editedNote: any
       </v-btn>
     </v-card-actions>
   </v-card>
-
-  <!-- <v-card
-    class="mx-auto"
-    width="400"
-    prepend-icon="mdi-home"
-  >
-    <div>
-      {{ date }}
-    </div>
-    <div>
-      {{ author }}
-    </div>
-    <v-card-text>
-      {{ body }}
-    </v-card-text>
-    <v-button href="path">
-      {{ path?.split("/").slice(-1)[0].replace("-", " ") }}
-    </v-button>
-  </v-card> -->
 </template>
