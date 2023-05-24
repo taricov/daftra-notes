@@ -2,14 +2,13 @@
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import notes from '../../fakedata'
-import { filteredNotes, getNotes } from '../../logic/getNotes'
-import type { Note } from '../../logic/getNotes'
+import type { Note } from '../../logic/types'
 
 const tabs = ref<any>(null)
 const filtered = ref<Note[]>([])
 
-const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
-const siteDomain = ref<any>('taricov')
+// const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
+// const siteDomain = ref<any>('taricov')
 
 // const siteInfo = ref<object | null>(null)
 // const thisPagePath: string = window.location.pathname
@@ -20,7 +19,7 @@ onMounted(() => {
 
   //   console.log(thisPagePath)
   // }
-  getNotes(siteDomain, apiKey)
+  // getData(siteDomain, apiKey, '/v2/api/entity/')
 })
 
 const textarea = ref<HTMLTextAreaElement>()

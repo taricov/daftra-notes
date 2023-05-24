@@ -1,15 +1,30 @@
 <script setup lang="ts">
+import { getData } from '../logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
-const apiKey = ref<string>('')
-const subdomain = ref<string>('')
-const moduleKey = ref<string>('')
+const accountKeys = ref<{
+  subdomain: any
+  apiKey: any
+  noteModule: String
+  businessName: String
+}>({
+  subdomain: '',
+  apiKey: '',
+  noteModule: '',
+  businessName: '',
+})
+console.log(accountKeys)
 async function submit() {
   loading.value = true
-  alert(JSON.stringify(apiKey, null, 2))
+
+  getData(accountKeys.value.subdomain, accountKeys.value.apiKey, 'site_info').then((data) => {
+    accountKeys.value.businessName = data.data.business_name
+    console.log(accountKeys.value)
+    setCookie
+  })
 }
 </script>
 
@@ -28,12 +43,12 @@ async function submit() {
         <v-sheet max-width="1000" class="mx-auto bg-transparent ">
           <v-form validate-on="submit lazy" @submit.prevent="submit">
             <v-text-field
-              v-model="subdomain"
+              v-model="accountKeys.subdomain"
               label="Site Subdomain"
               variant="underlined"
             />
             <v-text-field
-              v-model="apiKey"
+              v-model="accountKeys.apiKey"
               label="Api Key"
               variant="underlined"
             />
@@ -51,7 +66,7 @@ async function submit() {
 
             <v-text-field
               v-if="!freshInstall"
-              v-model="moduleKey"
+              v-model="accountKeys.noteModule"
               label="Module Key"
               variant="underlined"
             />
