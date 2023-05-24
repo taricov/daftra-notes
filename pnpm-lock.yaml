@@ -13,9 +13,15 @@ dependencies:
   helmet:
     specifier: ^7.0.0
     version: 7.0.0
+  vue-cookies:
+    specifier: ^1.8.3
+    version: 1.8.3
   vue-meta:
     specifier: ^2.4.0
     version: 2.4.0
+  vue3-cookies:
+    specifier: ^1.0.6
+    version: 1.0.6
   vue3-google-login:
     specifier: ^2.0.15
     version: 2.0.15(vue@3.2.47)
@@ -7982,6 +7988,10 @@ packages:
       - terser
     dev: true
 
+  /vue-cookies@1.8.3:
+    resolution: {integrity: sha512-VBRsyRMVdahBgFfh389TMHPmDdr4URDJNMk4FKSCfuNITs7+jitBDhwyL4RJd3WUsfOYNNjPAkfbehyH9AFuoA==}
+    dev: false
+
   /vue-demi@0.13.11(vue@3.2.47):
     resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
     engines: {node: '>=12'}
@@ -8018,6 +8028,12 @@ packages:
     resolution: {integrity: sha512-XEeZUmlVeODclAjCNpWDnjgw+t3WA6gdzs6ENoIAgwO1J1d5p1tezDhtteLUFwcaQaTtayRrsx7GL6oXp/m2Jw==}
     dependencies:
       deepmerge: 4.2.2
+    dev: false
+
+  /vue3-cookies@1.0.6:
+    resolution: {integrity: sha512-a1UvVD0qIgxyOqjlSOwnLnqAnz8ASltugEv8yX+96i/WGZAN9fEDci7xO4HIWZE1uToUnRq9JnFhvfDCSo45OA==}
+    dependencies:
+      vue: 3.2.47
     dev: false
 
   /vue3-google-login@2.0.15(vue@3.2.47):

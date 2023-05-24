@@ -2,8 +2,13 @@ import { GetSecretsCookie } from './utils'
 import type { NoteDataApi, WorkflowDataApi } from './types'
 
 // Get All Workflows
-export const GetAllWorkflows = async (): Promise<string> => {
-  const res: Response = await fetch(`https://${subD}.daftra.com/api/v2/entity/workflow_types`)
+export const GetAllWorkflows = async (apiK: string, subD: string): Promise<string> => {
+  const res: Response = await fetch(`https://${subD}.daftra.com/api/v2/entity/workflow_types`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'apiKey': apiK,
+    },
+  })
   const data = await res.json()
   return data.data[0].entity_key
 }

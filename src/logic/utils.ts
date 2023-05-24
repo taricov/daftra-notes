@@ -1,17 +1,20 @@
+// import { useCookies } from 'vue3-cookies'
 import type { Note } from './types'
 
-// Set Stored secrets from cookie
-export const SetSecretsCookie = (subD: string, apiK: string, endP: string): boolean => {
-  // let sData: { subD: string; apiK: string; endP: string }
-  // if (!endP || endP.length === 0)'' {
-  //   sData = {
-  //     subD,
-  //     endP,
-  //     apiK,
-  //   }
-  // }
+// const $cookies = inject<VueCookies>('$cookies')
 
-  return true
+// Set Stored secrets from cookie
+export const SetSecretsCookie = (subD: string, apiK: string, endP: string): void => {
+  const sData: { subD: string; apiK: string; endP: string } = {
+    subD,
+    endP,
+    apiK,
+  }
+  // const { cookies } = useCookies()
+  // cookies.set('myCoookie', 'abcdefg')
+  // cookies.set('myCoookie2', JSON.stringify(sData))
+  document.cookie = 'dnotes=ffe'
+  localStorage.setItem('connector-data', JSON.stringify(sData))
 }
 
 // Get Stored Secrets

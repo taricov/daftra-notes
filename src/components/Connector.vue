@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getData } from '../logic/daftraApi'
+import { SetSecretsCookie } from '../logic/utils'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
@@ -8,7 +8,7 @@ const loading = ref<boolean>(false)
 const accountKeys = ref<{
   subdomain: any
   apiKey: any
-  noteModule: String
+  noteModule: any
   businessName: String
 }>({
   subdomain: '',
@@ -16,15 +16,12 @@ const accountKeys = ref<{
   noteModule: '',
   businessName: '',
 })
-console.log(accountKeys)
 async function submit() {
+  SetSecretsCookie(accountKeys.value.subdomain, accountKeys.value.apiKey, accountKeys.value.noteModule)
   loading.value = true
-
-  getData(accountKeys.value.subdomain, accountKeys.value.apiKey, 'site_info').then((data) => {
-    accountKeys.value.businessName = data.data.business_name
-    console.log(accountKeys.value)
-    setCookie
-  })
+  setTimeout(() => {
+    loading.value = false
+  }, 2000)
 }
 </script>
 
