@@ -4,7 +4,12 @@ import notes from '../fakedata'
 import { getSecrets } from '~/logic/utils'
 
 const allTags = ref<String[]>(['work', 'invoice', 'inquiry', 'new hire'])
-const allColors = ref<String[]>(['red', 'green', 'yellow', 'blue'])
+const allColors = ref<Array<{ label: String; afterEl: String }>>([
+  { label: 'red', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-red-400 relative' },
+  { label: 'green', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-green-400 relative' },
+  { label: 'blue', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-blue-400 relative' },
+  { label: 'yellow', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-yellow-400 relative' },
+])
 const selectedColors = ref<String[]>([])
 const allPeriods = ref<String[]>(['Last Hour', 'Yesterday', 'Last 5 days', 'Last Week', 'Last 30 days'])
 const allRoutes = ref<String[]>(['/work-order', '/dashboard', '/invoices', '/invoices/23'])
@@ -59,7 +64,7 @@ onMounted(() => {
       </p>
 
       <v-container class="relative flex-col space-x-5 items-center justify-center bg-sky-100 bg-opacity-5 rounded my-3">
-        <div class="absolute top-0 left-0 z-10 bg-slate-900 bg-opacity-70 w-full h-full" absolute="true" />
+        <div class="absolute top-0 left-0 z-10 bg-slate-900 bg-opacity-70 w-full h-full" />
 
         <div>
           <v-row no-gutters>
@@ -72,11 +77,13 @@ onMounted(() => {
             >
               <!-- predefined date periods filter -->
               <v-select
+
                 label="Select Period..."
                 :items="allPeriods"
                 class="text-sky-100 text-xs"
                 variant="outlined"
                 density="compact"
+                hide-details="true"
               />
             </v-col>
             <v-col
@@ -94,7 +101,7 @@ onMounted(() => {
             </v-col>
           </v-row>
 
-          <v-row no-gutters>
+          <v-row no-gutters class="mt-3">
             <v-text class="text-sky-100 text-lg font-semibold">
               Filter By Page:
             </v-text>
@@ -107,18 +114,18 @@ onMounted(() => {
                 v-for="route in allRoutes"
                 :key="route"
                 v-model="selectedRoutes"
+                hide-details="true"
                 class="text-sky-100"
                 variant="outlined"
                 density="compact"
                 :label="route"
                 color="success"
                 :value="route"
-                hide-details
               />
             </v-col>
           </v-row>
 
-          <v-row no-gutters class="flex-col justify-start items-start mt-3">
+          <v-row no-gutters class="flex-col justify-start items-start">
             <v-text class="text-sky-100 text-lg font-semibold">
               Filter By Color:
             </v-text>
@@ -129,17 +136,13 @@ onMounted(() => {
               <!-- color/colorful statuses filter -->
               <v-checkbox
                 v-for="c in allColors"
-                :key="c"
+                :key="c.label"
                 v-model="selectedColors"
-                :label="c"
-                class="text-sky-100 capitalize"
-                variant="outlined"
+                hide-details="true"
+                :label="c.label"
+                :class="`text-sky-100 capitalize ${c.afterEl}`"
                 density="compact"
-              >
-                <div
-                  :class="`bg-${c}-500 w-3 h-3 rounded-full`"
-                />
-              </v-checkbox>
+              />
             </v-col>
           </v-row>
           <v-row no-gutters class="flex justify-between">
@@ -148,12 +151,14 @@ onMounted(() => {
               sm="6"
               class="text-left"
             >
-              <v-text class="block mb-3 text-sky-100 text-lg font-semibold">
+              <v-text class="block mb-1 text-sky-100 text-lg font-semibold">
                 Filter By Tags:
               </v-text>
               <!-- tags filter -->
               <v-select
+                bg-color="transparent"
                 chips
+                multiple
                 label="Select"
                 :items="allTags"
                 class="text-sky-100"
@@ -166,7 +171,7 @@ onMounted(() => {
               sm="5"
               class="text-left "
             >
-              <v-text class="block text-sky-100 text-lg font-semibold mb-3">
+              <v-text class="block text-sky-100 text-lg font-semibold mb-1">
                 Or Search:
               </v-text>
               <!-- search bar -->
@@ -182,7 +187,7 @@ onMounted(() => {
           </v-row>
           <!-- action btns -->
         </div>
-        <div class="w-full flex items-start space-x-3 mx-0 mt-5">
+        <div class="w-full flex items-start space-x-3 mx-5">
           <v-btn ripple="false">
             Show {{ filteredRez.length || 9 }} Results
           </v-btn>
@@ -228,7 +233,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.v-select .dropdown-menu{
-  @apply bg-sky-500
+.red-first-item .v-list-item:first-child .v-list-item__title {
+  color: red;
 }
+.v-field .v-field__input > input{
+background-color: rebeccapurple;
+      }
 </style>
