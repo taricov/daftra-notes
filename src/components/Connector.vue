@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import { SetSecretsCookie } from '../logic/utils'
+import { setSecrets } from '../logic/utils'
+import type { SecretsType } from '../logic/types'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
-const accountKeys = ref<{
-  subdomain: any
-  apiKey: any
-  noteModule: any
-  businessName: String
-}>({
+const accountKeys = ref<SecretsType>({
   subdomain: '',
   apiKey: '',
-  noteModule: '',
+  noteModuleKey: '',
   businessName: '',
+  theme: '',
 })
 async function submit() {
-  SetSecretsCookie(accountKeys.value.subdomain, accountKeys.value.apiKey, accountKeys.value.noteModule)
+  setSecrets(accountKeys.value)
   loading.value = true
   setTimeout(() => {
     loading.value = false
@@ -63,7 +60,7 @@ async function submit() {
 
             <v-text-field
               v-if="!freshInstall"
-              v-model="accountKeys.noteModule"
+              v-model="accountKeys.noteModuleKey"
               label="Module Key"
               variant="underlined"
             />

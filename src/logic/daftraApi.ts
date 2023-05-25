@@ -1,4 +1,4 @@
-import { GetSecretsCookie } from './utils'
+import { getSecrets } from './utils'
 import type { NoteDataApi, WorkflowDataApi } from './types'
 
 // Get All Workflows
@@ -14,7 +14,7 @@ export const GetAllWorkflows = async (apiK: string, subD: string): Promise<strin
 }
 // Get Site Info
 export const GetSiteInfo = async () => {
-  const { subD, apiK } = GetSecretsCookie()
+  const { subD, apiK } = getSecrets()
 
   const res = await fetch(`https://${subD}.daftra.com/api2/site_info`, {
     headers: {
@@ -27,7 +27,7 @@ export const GetSiteInfo = async () => {
 }
 // Get Notes
 export const GetNotes = async () => {
-  const { subD, apiK, moduleK } = GetSecretsCookie()
+  const { subD, apiK, moduleK } = getSecrets()
 
   const res = await fetch(`https://${subD}.daftra.com/v2/api/entity/${moduleK}/list?per_page=100000`, {
     headers: {
@@ -40,7 +40,7 @@ export const GetNotes = async () => {
 }
 // Creat the D-Note Module
 export const CreateNoteModule = async (): Promise<string> => {
-  const { subD, apiK } = GetSecretsCookie()
+  const { subD, apiK } = getSecrets()
   const data: WorkflowDataApi = {
     name: 'D-Notes Module',
     status: 1,
@@ -62,7 +62,7 @@ export const CreateNoteModule = async (): Promise<string> => {
 }
 // Create a note
 export const CreateNote = async (data: NoteDataApi): Promise<string> => {
-  const { subD, endP, apiK } = GetSecretsCookie()
+  const { subD, endP, apiK } = getSecrets()
 
   const res: Response = await fetch(`https://${subD}.daftra.com/v2/api/entity/${endP}`, {
     method: 'POST',
@@ -79,7 +79,7 @@ export const CreateNote = async (data: NoteDataApi): Promise<string> => {
 
 // Update a note
 export const UpdateNote = async (id: string, data: NoteDataApi): Promise<string> => {
-  const { subD, endP, apiK } = GetSecretsCookie()
+  const { subD, endP, apiK } = getSecrets()
 
   const res: Response = await fetch(`https://${subD}.daftra.com/v2/api/entity/${endP}/${id}`, {
     method: 'PUT',
@@ -95,7 +95,7 @@ export const UpdateNote = async (id: string, data: NoteDataApi): Promise<string>
 }
 // Delete a note
 export const DeleteNote = async (id: string): Promise<string> => {
-  const { subD, endP, apiK } = GetSecretsCookie()
+  const { subD, endP, apiK } = getSecrets()
   const res: Response = await fetch(`https://${subD}.daftra.com/v2/api/entity/${endP}/${id}`, {
     method: 'DELETE',
     headers: {

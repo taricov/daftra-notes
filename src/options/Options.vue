@@ -20,8 +20,12 @@ function openSettingsFn() {
         Notes Dashboard
         <!-- <span class="bg-blue-100 text-blue-800 text-2xl font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-2">Free</span> -->
       </h1>
-      <p class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 mb-6 text-lg font-normal lg:text-xl sm:px-16 xl:px-48 text-gray-300">
+      <!-- protip -->
+      <!-- <p class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 mb-6 text-lg font-normal lg:text-xl sm:px-16 xl:px-48 text-gray-300">
         Pro tip: Use <span class="rounded px-1 py-1 bg-gradient-to-r to-emerald-600 from-sky-400 text-black text-md"> Ctrl + K </span>&nbsp;the D-MagicBar and access your notes on-the-fly
+      </p> -->
+      <p class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 mb-6 text-lg font-normal lg:text-xl sm:px-16 xl:px-48 text-gray-300">
+        Pro tip: Use filters or search by date/page/word for quick access
       </p>
       <v-container class="!bg-slate-100 !bg-opacity-2">
         <v-row no-gutters>

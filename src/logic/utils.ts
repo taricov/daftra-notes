@@ -1,23 +1,14 @@
 // import { useCookies } from 'vue3-cookies'
-import type { Note } from './types'
-interface SecretsType {
-  subD: string
-  apiK: string
-  endP: string
-  theme: string
-}
+import type { Note, SecretsType } from './types'
 
 // const $cookies = inject<VueCookies>('$cookies')
 
 // Set Stored secrets from cookie
-export const SetSecretsCookie = ({ subD, apiK, endP }: Omit<SecretsType, 'theme'>): void => {
+export const setSecrets = ({ subdomain, apiKey, noteModuleKey, businessName, theme = 'dark' }: SecretsType): void => {
   // eslint-disable-next-line no-console
-  console.log(subD, apiK, endP)
-  const sData: SecretsType = {
-    subD,
-    endP,
-    apiK,
-    theme: 'dark',
+  console.log(subdomain, apiKey, noteModuleKey, businessName, theme)
+  const sData = {
+    subdomain, apiKey, noteModuleKey, businessName, theme,
   }
   // const { cookies } = useCookies()
   // cookies.set('myCoookie', 'abcdefg')
@@ -27,14 +18,15 @@ export const SetSecretsCookie = ({ subD, apiK, endP }: Omit<SecretsType, 'theme'
 }
 
 // Get Stored Secrets
-export const GetSecretsCookie = () => {
+export const getSecrets = () => {
   const secrets: any = localStorage.getItem('connector-data')
-  const parsed = secrets ?? JSON.parse(secrets)
+  const parsedSecrets = JSON.parse(secrets)
 
-  const { subD, endP, apiK, moduleK } = parsed
+  // const { subD, endP, apiK, moduleK, theme } = parsedSecrets
   // eslint-disable-next-line no-console
-  console.log(parsed)
-  return { subD, endP, apiK, moduleK }
+  console.log(parsedSecrets)
+  // return { subD, endP, apiK, moduleK, theme }
+  return parsedSecrets
 }
 
 export const filteredNotes = (notes: Note[]): Array<Note> => {

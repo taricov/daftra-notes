@@ -24,3 +24,11 @@ export interface Note {
   author: string
   path: string
 }
+
+export interface SecretsType {
+  subdomain: string
+  apiKey: string
+  noteModuleKey: string
+  businessName: string
+  theme: string
+}
