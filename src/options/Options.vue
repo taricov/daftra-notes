@@ -58,62 +58,146 @@ onMounted(() => {
         Pro tip: Use filters or search by date/page/word for quick access
       </p>
 
-      <v-container disabled class="relative flex-col space-x-5 items-center justify-center bg-sky-100 bg-opacity-5 rounded my-3">
+      <v-container class="relative flex-col space-x-5 items-center justify-center bg-sky-100 bg-opacity-5 rounded my-3">
+        <div class="absolute top-0 left-0 z-10 bg-slate-900 bg-opacity-70 w-full h-full" absolute="true" />
+
         <div>
-          <!-- predefined date periods filter -->
-          <v-select
-            label="Periods"
-            :items="allPeriods"
-          />
-          <!-- from to filter -->
-          <Datepicker v-model="dateFrom" />
-          <Datepicker v-model="dateTo" />
+          <v-row no-gutters>
+            <v-text class="w-screen text-sky-100 text-lg font-semibold text-left mb-2">
+              Fitler By Date:
+            </v-text>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <!-- predefined date periods filter -->
+              <v-select
+                label="Select Period..."
+                :items="allPeriods"
+                class="text-sky-100 text-xs"
+                variant="outlined"
+                density="compact"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <!-- from to filter -->
+              <Datepicker v-model="dateFrom" />
+            </v-col>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <Datepicker v-model="dateTo" />
+            </v-col>
+          </v-row>
 
-          <!-- routes filter -->
+          <v-row no-gutters>
+            <v-text class="text-sky-100 text-lg font-semibold">
+              Filter By Page:
+            </v-text>
+            <v-col
+              cols="12"
+              class="flex items-center justify-center mx-8 w-full space-x-10"
+            >
+              <!-- routes filter -->
+              <v-switch
+                v-for="route in allRoutes"
+                :key="route"
+                v-model="selectedRoutes"
+                class="text-sky-100"
+                variant="outlined"
+                density="compact"
+                :label="route"
+                color="success"
+                :value="route"
+                hide-details
+              />
+            </v-col>
+          </v-row>
 
-          <v-switch
-            v-for="route in allRoutes"
-            :key="route"
-            v-model="selectedRoutes"
-            :label="route"
-            color="success"
-            :value="route"
-            hide-details
-          />
-          <!-- color/colorful statuses filter -->
-          <v-sheet>
-            <v-checkbox
-              v-for="c in allColors"
-              :key="c"
-              v-model="selectedColors"
-              :label="c"
-            />
-          </v-sheet>
-          <!-- tags filter -->
-          <v-select
-            chips
-            label="Select"
-            :items="allTags"
-          />
-          <!-- search bar -->
-          <v-text-field
-            label="Search Barr"
-            hide-details="auto"
-          />
+          <v-row no-gutters class="flex-col justify-start items-start mt-3">
+            <v-text class="text-sky-100 text-lg font-semibold">
+              Filter By Color:
+            </v-text>
+            <v-col
+              col="12"
+              class="flex items-center justify-center mx-8 w-full space-x-10"
+            >
+              <!-- color/colorful statuses filter -->
+              <v-checkbox
+                v-for="c in allColors"
+                :key="c"
+                v-model="selectedColors"
+                :label="c"
+                class="text-sky-100 capitalize"
+                variant="outlined"
+                density="compact"
+              >
+                <div
+                  :class="`bg-${c}-500 w-3 h-3 rounded-full`"
+                />
+              </v-checkbox>
+            </v-col>
+          </v-row>
+          <v-row no-gutters class="flex justify-between">
+            <v-col
+              col="12"
+              sm="6"
+              class="text-left"
+            >
+              <v-text class="block mb-3 text-sky-100 text-lg font-semibold">
+                Filter By Tags:
+              </v-text>
+              <!-- tags filter -->
+              <v-select
+                chips
+                label="Select"
+                :items="allTags"
+                class="text-sky-100"
+                variant="outlined"
+                density="compact"
+              />
+            </v-col>
+            <v-col
+              col="12"
+              sm="5"
+              class="text-left "
+            >
+              <v-text class="block text-sky-100 text-lg font-semibold mb-3">
+                Or Search:
+              </v-text>
+              <!-- search bar -->
+              <v-text-field
+                label="Looking up for..."
+                hide-details="auto"
+                class="text-sky-100"
+                variant="outlined"
+                density="compact"
+                prepend="ff"
+              />
+            </v-col>
+          </v-row>
           <!-- action btns -->
         </div>
-        <v-sheet>
-          <v-btn>Show {{ filteredRez.length || 9 }} Results</v-btn>
-          <v-btn>Reset</v-btn>
-        </v-sheet>
+        <div class="w-full flex items-start space-x-3 mx-0 mt-5">
+          <v-btn ripple="false">
+            Show {{ filteredRez.length || 9 }} Results
+          </v-btn>
+          <v-btn v-ripple="false">
+            Reset
+          </v-btn>
+        </div>
 
-        <div variant="plain" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-0 text-xs font-bold  ">
+        <div variant="plain" class="z-20 rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-0 text-xs font-bold  ">
           Coming Soon
         </div>
       </v-container>
 
       <v-container v-if="businessNameKnown" class="!bg-slate-100 !bg-opacity-2">
-        <div class="opacity-30 mt-4 transition duration-300">
+        <div class="opacity-90 mb-4 text-left mx-3 transition duration-300">
           {{ `3/${notes.length}` }}
         </div>
         <v-row no-gutters>
@@ -142,3 +226,9 @@ onMounted(() => {
     </main>
   </v-app>
 </template>
+
+<style scoped>
+.v-select .dropdown-menu{
+  @apply bg-sky-500
+}
+</style>
