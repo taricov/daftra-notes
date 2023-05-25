@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { setSecrets } from '../logic/utils'
+import { getSecrets, setSecrets } from '../logic/utils'
 import type { SecretsType } from '../logic/types'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
+const isConnected = ref<boolean>(false)
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
 const accountKeys = ref<SecretsType>({
@@ -12,6 +13,11 @@ const accountKeys = ref<SecretsType>({
   noteModuleKey: '',
   businessName: '',
   theme: '',
+})
+
+onMounted(() => {
+  const { noteModuleKey } = getSecrets()
+  isConnected.value = !!noteModuleKey
 })
 async function submit() {
   setSecrets(accountKeys.value)
@@ -25,11 +31,20 @@ async function submit() {
 <template>
   <v-expansion-panels
     :disabled="isDisabled"
+    is-active="true"
+    :readonly="isConnected"
     class="!w-9/12 m-auto !bg-opacity-5 mb-5"
   >
     <v-expansion-panel class="!bg-opacity-5 !bg-sky-100 !text-sky-200">
       <v-expansion-panel-title class="bg-opacity-20 !text-center">
-        <div class="w-full text-center">
+        <div v-if="isConnected" class="w-full text-center flex items-center justify-center space-x-3">
+          <span>Connect
+          </span>
+          <span class="m-0">
+            <svg class="w-6 fill-emerald-600 rounded-full bg-emerald-600 bg-opacity-5 p-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Connected</title><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
+          </span>
+        </div>
+        <div v-if="!isConnected" class="w-full text-center">
           Connect
         </div>
       </v-expansion-panel-title>
