@@ -109,8 +109,4 @@ const toggleLang = () => {
 .v-dialog.v-overlay{
   @apply !bg-gray-100 !bg-opacity-10
 }
-/* .v-chip--variant-tonal .v-chip__underlay{
-  opacity: 1 !important;
-  background-color: red !important;
-} */
 </style>

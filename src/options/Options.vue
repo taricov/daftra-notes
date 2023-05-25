@@ -3,6 +3,19 @@ import 'vuetify/styles'
 import notes from '../fakedata'
 import { getSecrets } from '~/logic/utils'
 
+const allTags = ref<String[]>(['work', 'invoice', 'inquiry', 'new hire'])
+const allColors = ref<String[]>(['red', 'green', 'yellow', 'blue'])
+const selectedColors = ref<String[]>([])
+const allPeriods = ref<String[]>(['Last Hour', 'Yesterday', 'Last 5 days', 'Last Week', 'Last 30 days'])
+const allRoutes = ref<String[]>(['/work-order', '/dashboard', '/invoices', '/invoices/23'])
+const selectedRoutes = ref<String[]>([])
+const dateFrom = ref()
+const dateTo = ref()
+
+const filteredRez = () => {
+  return Math.floor(Math.random() * 100)
+}
+
 const openSettings = ref<boolean>(false)
 function openSettingsFn() {
   openSettings.value = !openSettings.value
@@ -45,8 +58,64 @@ onMounted(() => {
         Pro tip: Use filters or search by date/page/word for quick access
       </p>
 
-      <v-container class="flex space-x-5 items-center justify-center bg-sky-100 bg-opacity-5 rounded my-3" />
+      <v-container disabled class="relative flex-col space-x-5 items-center justify-center bg-sky-100 bg-opacity-5 rounded my-3">
+        <div>
+          <!-- predefined date periods filter -->
+          <v-select
+            label="Periods"
+            :items="allPeriods"
+          />
+          <!-- from to filter -->
+          <Datepicker v-model="dateFrom" />
+          <Datepicker v-model="dateTo" />
+
+          <!-- routes filter -->
+
+          <v-switch
+            v-for="route in allRoutes"
+            :key="route"
+            v-model="selectedRoutes"
+            :label="route"
+            color="success"
+            :value="route"
+            hide-details
+          />
+          <!-- color/colorful statuses filter -->
+          <v-sheet>
+            <v-checkbox
+              v-for="c in allColors"
+              :key="c"
+              v-model="selectedColors"
+              :label="c"
+            />
+          </v-sheet>
+          <!-- tags filter -->
+          <v-select
+            chips
+            label="Select"
+            :items="allTags"
+          />
+          <!-- search bar -->
+          <v-text-field
+            label="Search Barr"
+            hide-details="auto"
+          />
+          <!-- action btns -->
+        </div>
+        <v-sheet>
+          <v-btn>Show {{ filteredRez.length || 9 }} Results</v-btn>
+          <v-btn>Reset</v-btn>
+        </v-sheet>
+
+        <div variant="plain" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-0 text-xs font-bold  ">
+          Coming Soon
+        </div>
+      </v-container>
+
       <v-container v-if="businessNameKnown" class="!bg-slate-100 !bg-opacity-2">
+        <div class="opacity-30 mt-4 transition duration-300">
+          {{ `3/${notes.length}` }}
+        </div>
         <v-row no-gutters>
           <v-col
             v-for="note in notes"
