@@ -20,12 +20,10 @@ export const setSecrets = ({ subdomain, apiKey, noteModuleKey, businessName, the
 // Get Stored Secrets
 export const getSecrets = () => {
   const secrets: any = localStorage.getItem('connector-data')
-  const parsedSecrets = JSON.parse(secrets)
+  const parsedSecrets: SecretsType = JSON.parse(secrets)
 
-  // const { subD, endP, apiK, moduleK, theme } = parsedSecrets
   // eslint-disable-next-line no-console
   console.log(parsedSecrets)
-  // return { subD, endP, apiK, moduleK, theme }
   return parsedSecrets
 }
 

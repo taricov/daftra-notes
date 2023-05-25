@@ -5,10 +5,10 @@ const status = ref<string>('')
 const color = ref<string>('')
 
 onMounted(() => {
-  const { subD, endP, apiK, moduleK, theme } = getSecrets()
+  const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets()
   // eslint-disable-next-line no-console
-  console.log('from popup: ', subD, endP, apiK, moduleK, theme)
-  status.value = moduleK ? 'Active' : 'Not Active'
+  console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
+  status.value = noteModuleKey ? 'Active' : 'Not Active'
   color.value = status.value === 'Active' ? 'text-emerald-500' : 'text-red-500'
 })
 
