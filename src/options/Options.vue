@@ -38,8 +38,8 @@ const currLang = ref<string>('en')
 onMounted(async () => {
   filteredNotes.value = filterNotes()
   try {
-    const { subdomain, businessName, apiKey, noteModuleKey, theme, lang } = getSecrets()
-    // console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
+    const { sub_domain, businessName, apiKey, noteModuleKey, theme, lang } = getSecrets()
+    // console.log('from popup: ', sub_domain, businessName, apiKey, noteModuleKey, theme)
 
     businessNameKnown.value = businessName
     currtheme.value = theme

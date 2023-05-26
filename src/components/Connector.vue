@@ -2,8 +2,8 @@
 <script setup lang="ts">
 import { getSecrets } from '../logic/utils'
 import type { SecretsType } from '../logic/types'
-import { CreateUser, GetAllUsers } from '../logic/dbSDK'
-import { CreateNoteModule, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
+import { CreateUser } from '../logic/dbSDK'
+import { CreateNoteModule, GetAllWorkflows, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
@@ -13,7 +13,7 @@ const connectPanel = ref<Array<String>>([])
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
 const accountKeys = ref<SecretsType>({
-  subdomain: '',
+  sub_domain: '',
   apiKey: '',
   noteModuleKey: '',
   businessName: '',
@@ -26,11 +26,11 @@ const accountKeys = ref<SecretsType>({
 onMounted(async () => {
   try {
     isConnected.value = true
-    const { subdomain, noteModuleKey, apiKey } = getSecrets()
-    if (!subdomain)
+    const { sub_domain, noteModuleKey, apiKey } = getSecrets()
+    if (!sub_domain)
       isConnected.value = false
     accountKeys.value.noteModuleKey = noteModuleKey
-    accountKeys.value.subdomain = subdomain
+    accountKeys.value.sub_domain = sub_domain
     accountKeys.value.apiKey = apiKey
     const testConn = await GetNotes()
     loading.value = true
@@ -49,23 +49,26 @@ onMounted(async () => {
 async function submit() {
   // loading...
   loading.value = true
-  const { subdomain, apiKey } = accountKeys.value
+  const { sub_domain, apiKey } = accountKeys.value
   // Site info based on user inputs
-  const siteData = await GetSiteInfo({ subdomain, apiKey })
-  CreateUser({ business_name: '2' })
-  const connectionTest = await GetAllUsers
-  console.log(connectionTest)
-  const noteModule = await CreateNoteModule({ subdomain, apiKey })
-  console.log(noteModule)
 
-  // accountKeys.value.businessName = siteData.data.Site.business_name
-  // Create a new workflow for notes
-  if (noteModule.ok) {
-    // Fetching module entity_key
-    // const noteModuleKey = await GetAllWorkflows({ subdomain, apiKey })
-    // accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
-    // Set Secrets
-    // CreateUser(accountKeys.value)
+  const siteData = await GetSiteInfo({ sub_domain, apiKey })
+  const { id, business_name, first_name, last_name, subdomain, address1, address2, city, state, phone1, phone2, country_code, currency_code, email, bn1 } = await siteData.data.Site
+
+  try {
+    const noteModule = await CreateNoteModule({ sub_domain, apiKey })
+    console.log(noteModule)
+  }
+  catch (err) {
+    console.log(err, 'Something went wrong! Please try again')
+  }
+  // Fetching module entity_key
+  const noteModuleKey = await GetAllWorkflows({ sub_domain, apiKey })
+  accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
+
+  const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: accountKeys.value.apiKey, note_module_key: accountKeys.value.noteModuleKey, prefer_dark: true })
+
+  if (userCreated.ok) {
     isConnected.value = true
     loading.value = false
     connectPanel.value = []
@@ -122,8 +125,8 @@ async function submit() {
         <v-sheet max-width="1000" class="mx-auto bg-transparent ">
           <v-form validate-on="submit lazy" @submit.prevent="submit">
             <v-text-field
-              v-model="accountKeys.subdomain"
-              label="Site Subdomain"
+              v-model="accountKeys.sub_domain"
+              label="Daftra Subdomain"
               variant="underlined"
             />
             <v-text-field

@@ -4,9 +4,9 @@ import type { Note, SecretsType } from './types'
 // const $cookies = inject<VueCookies>('$cookies')
 
 // Set Stored secrets from cookie
-export const setSecrets = ({ subdomain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
+export const setSecrets = ({ sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
   const sData = {
-    subdomain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,
+    sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,
   }
   // const { cookies } = useCookies()
   // cookies.set('myCoookie', 'abcdefg')

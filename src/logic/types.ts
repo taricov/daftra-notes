@@ -26,7 +26,7 @@ export interface Note {
 }
 
 export interface SecretsType {
-  subdomain: string
+  sub_domain: string
   apiKey: string
   noteModuleKey: string
   businessName: string
