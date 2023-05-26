@@ -6,7 +6,7 @@ import { filteredNotes } from '../../logic/utils'
 // import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
 import type { Note } from '../../logic/types'
 
-const tabs = ref<any>(null)
+const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
 
 // const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
@@ -17,27 +17,29 @@ const filtered = ref<Note[]>([])
 
 filtered.value = filteredNotes(notes)
 
-const textarea = ref<HTMLTextAreaElement>()
+const noteTextarea = ref<HTMLTextAreaElement>()
+const form = ref<HTMLFormElement>()
 const isLoading = ref<boolean>(false)
 const drawer = ref<boolean>(false)
 const newNote = ref<string>('')
 const toggleDrawer = (): void => {
   drawer.value = !drawer.value
-  textarea.value?.focus()
+  noteTextarea.value?.focus()
 }
-const addNote = (e: any): void => {
-  if (e.key === 'enter')
-
-    alert(JSON.stringify(newNote.value))
+const addNote = (): void => {
+  // if (e.ctrlKey && e.code === 'Enter')
+  // alert(JSON.stringify(newNote.value))
+  // eslint-disable-next-line no-console
+  console.log('sub')
+  form.value?.reset()
 }
-
 const keys = useMagicKeys()
 whenever(keys['alt+≠'], () => {
   drawer.value = false
 })
 whenever(keys['='], () => {
   drawer.value = true
-  textarea.value?.focus()
+  noteTextarea.value?.focus()
 })
 
 // const submit = (newNote: Event): any => {
@@ -81,12 +83,19 @@ whenever(keys['='], () => {
         <v-tabs
           v-model="tabs"
           fixed-tabs
-          bg-color="blue"
         >
-          <v-tab value="recently-added">
+          <v-tab
+            v-ripple="false"
+            class="bg-sky-500 hover:!bg-sky-600 active:!bg-transparent transition duration-300" value="recently-added"
+            variant="outlined"
+          >
             Recently Added
           </v-tab>
-          <v-tab value="page-notes">
+          <v-tab
+            v-ripple="false"
+            class="bg-sky-500 hover:!bg-sky-600 transition duration-300" value="page-notes"
+            variant="outlined"
+          >
             Page Notes
           </v-tab>
         </v-tabs>
@@ -134,9 +143,9 @@ whenever(keys['='], () => {
         <!-- </v-container> -->
       </v-container>
       <v-container fluid>
-        <form @submit.prevent="addNote">
+        <form ref="form" @submit.prevent="addNote">
           <v-textarea
-            ref="textarea"
+            ref="noteTextarea"
             v-model="newNote"
             required
             no-resize
@@ -158,5 +167,11 @@ whenever(keys['='], () => {
 }
 .v-navigation-drawer__content{
   @apply !flex flex-col justify-between overflow-hidden;
+}
+.v-btn__overlay{
+  @apply hidden
+}
+button:not(.v-tab--selected){
+  @apply transform translate-y-2
 }
 </style>
