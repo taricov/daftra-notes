@@ -5,10 +5,10 @@ import notes from '../../fakedata'
 import { currPageNotes } from '../../logic/utils'
 // import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
 import type { Note } from '../../logic/types'
-import { CreateNote } from '~/logic/daftraApi'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
+// const apiNotes = ref<Note[]>([])
 
 // const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
 // const siteDomain = ref<any>('taricov')
@@ -28,7 +28,7 @@ const toggleDrawer = (): void => {
   noteTextarea.value?.focus()
 }
 const addNote = (): void => {
-  CreateNote()
+  // CreateNote()
   // console.log(newNote.value)
   form.value?.reset()
 }

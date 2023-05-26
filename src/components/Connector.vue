@@ -26,6 +26,8 @@ onMounted(async () => {
   try {
     isConnected.value = true
     const { subdomain, noteModuleKey, apiKey } = getSecrets()
+    if (!subdomain)
+      isConnected.value = false
     accountKeys.value.noteModuleKey = noteModuleKey
     accountKeys.value.subdomain = subdomain
     accountKeys.value.apiKey = apiKey
@@ -37,6 +39,10 @@ onMounted(async () => {
   }
   catch (err) {
     console.error(err)
+  }
+  finally {
+    if (!getSecrets())
+      isConnected.value = false
   }
 })
 async function submit() {
