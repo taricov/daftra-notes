@@ -2,9 +2,10 @@
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import notes from '../../fakedata'
-import { filteredNotes } from '../../logic/utils'
+import { currPageNotes } from '../../logic/utils'
 // import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
 import type { Note } from '../../logic/types'
+import { CreateNote } from '~/logic/daftraApi'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
@@ -15,7 +16,7 @@ const filtered = ref<Note[]>([])
 // const siteInfo = ref<object | null>(null)
 // const thisPagePath: string = window.location.pathname
 
-filtered.value = filteredNotes(notes)
+filtered.value = currPageNotes(notes)
 
 const noteTextarea = ref<HTMLTextAreaElement>()
 const form = ref<HTMLFormElement>()
@@ -27,10 +28,8 @@ const toggleDrawer = (): void => {
   noteTextarea.value?.focus()
 }
 const addNote = (): void => {
-  // if (e.ctrlKey && e.code === 'Enter')
-  // alert(JSON.stringify(newNote.value))
-  // eslint-disable-next-line no-console
-  console.log('sub')
+  CreateNote()
+  // console.log(newNote.value)
   form.value?.reset()
 }
 const keys = useMagicKeys()
@@ -41,19 +40,6 @@ whenever(keys['='], () => {
   drawer.value = true
   noteTextarea.value?.focus()
 })
-
-// const submit = (newNote: Event): any => {
-//   /* eslint-disable-next-line
-// */
-// }
-// function openOptionsPage() {
-// chrome.runtime.openOptionsPage();
-//   if (chrome.runtime.openOptionsPage)
-//     chrome.runtime.openOptionsPage()
-
-//   else
-//     window.open(chrome.runtime.getURL('options.html'))
-// }
 </script>
 
 <template>

@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import { getSecrets } from '~/logic/utils'
 
@@ -9,15 +10,18 @@ const currtheme = ref<string | null>(null)
 const currLang = ref<string>('en')
 
 onMounted(() => {
-  const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets()
-  // eslint-disable-next-line no-console
-  console.log(businessName)
-  // eslint-disable-next-line no-console
-  console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
+  try {
+    const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets() || null
+    console.log(businessName)
+    console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
 
-  businessNameKnown.value = businessName || 'Notes'
-  currtheme.value = theme || 'dark'
-  connected.value = !!noteModuleKey
+    businessNameKnown.value = businessName || 'Notes'
+    currtheme.value = theme || 'dark'
+    connected.value = !!noteModuleKey
+  }
+  catch (err) {
+    console.error(err)
+  }
 })
 
 const toggleTheme = () => {
@@ -29,6 +33,9 @@ const toggleLang = () => {
   currLang.value === 'en' ? currLang.value = 'ar' : currLang.value = 'en'
   // eslint-disable-next-line no-console
   console.log(currLang.value)
+}
+const resetSecrets = () => {
+  localStorage.removeItem('connector-data')
 }
 </script>
 
@@ -50,7 +57,7 @@ const toggleLang = () => {
           <!-- and cusomize the look to your likings -->
           </p>
         </div>
-        <v-btn class="!opacity-40 w-fit !bg-opacity-5 !shadow-none hover:shadow-lg transition duration-300 !bg-sky-200 overflow-hidden">
+        <v-btn class="!opacity-40 w-fit !bg-opacity-5 !shadow-none hover:shadow-lg transition duration-300 !bg-sky-200 overflow-hidden" @click="resetSecrets">
           <svg class="fill-sky-400 transition duration-300 w-7 mt-[.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Reset Connection</title><path d="M12.63,2C18.16,2 22.64,6.5 22.64,12C22.64,17.5 18.16,22 12.63,22C9.12,22 6.05,20.18 4.26,17.43L5.84,16.18C7.25,18.47 9.76,20 12.64,20A8,8 0 0,0 20.64,12A8,8 0 0,0 12.64,4C8.56,4 5.2,7.06 4.71,11H7.47L3.73,14.73L0,11H2.69C3.19,5.95 7.45,2 12.63,2M15.59,10.24C16.09,10.25 16.5,10.65 16.5,11.16V15.77C16.5,16.27 16.09,16.69 15.58,16.69H10.05C9.54,16.69 9.13,16.27 9.13,15.77V11.16C9.13,10.65 9.54,10.25 10.04,10.24V9.23C10.04,7.7 11.29,6.46 12.81,6.46C14.34,6.46 15.59,7.7 15.59,9.23V10.24M12.81,7.86C12.06,7.86 11.44,8.47 11.44,9.23V10.24H14.19V9.23C14.19,8.47 13.57,7.86 12.81,7.86Z" /></svg>
         </v-btn>
       </v-container>
@@ -94,12 +101,12 @@ const toggleLang = () => {
             {{ `Language: ${currLang}` }}
           </v-tooltip>
         </v-btn>
-        <div variant="plain" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-1/12 text-xs font-bold  ">
+        <div variant="plain" class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-1/12 text-xs font-bold mx-0">
           Coming Soon
         </div>
       </v-container>
       <v-card-text>
-        <Connector v-if="!connected" />
+        <Connector />
       </v-card-text>
     </v-card>
   </v-dialog>

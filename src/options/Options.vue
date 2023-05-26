@@ -1,8 +1,12 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import 'vuetify/styles'
-import notes from '../fakedata'
 import { getSecrets } from '~/logic/utils'
+import type { Note } from '~/logic/types'
+import { GetNotes } from '~/logic/daftraApi'
 
+const apiNotes = ref<Note[]>([])
+const filteredNotes = ref<Note[]>([])
 const allTags = ref<String[]>(['work', 'invoice', 'inquiry', 'new hire'])
 const allColors = ref<Array<{ label: String; afterEl: String }>>([
   { label: 'red', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-red-400 relative' },
@@ -17,8 +21,8 @@ const selectedRoutes = ref<String[]>([])
 const dateFrom = ref()
 const dateTo = ref()
 
-const filteredRez = () => {
-  return Math.floor(Math.random() * 100)
+const filterNotes = () => {
+  return Array(Math.floor(Math.random() * 100))
 }
 
 const openSettings = ref<boolean>(false)
@@ -30,15 +34,22 @@ const businessNameKnown = ref<string | null>(null)
 const currtheme = ref<string | null>(null)
 const currLang = ref<string>('en')
 
-onMounted(() => {
-  const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets()
+onMounted(async () => {
+  filteredNotes.value = filterNotes()
+  try {
+    const { subdomain, businessName, apiKey, noteModuleKey, theme, lang } = getSecrets()
+    console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
 
-  // eslint-disable-next-line no-console
-  console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
+    businessNameKnown.value = businessName
+    currtheme.value = theme
+    currLang.value = lang
 
-  businessNameKnown.value = businessName || 'Notes'
-  currtheme.value = theme || 'dark'
-  currLang.value = theme || 'en'
+    const reqNotes = await GetNotes()
+    apiNotes.value = reqNotes.data
+  }
+  catch (err) {
+    console.log(err)
+  }
 })
 </script>
 
@@ -51,8 +62,13 @@ onMounted(() => {
     </v-btn>
 
     <main class="px-4 py-10 text-center text-gray-700 dark:text-gray-200">
+      <span class="bg-sky-400 bg-opacity-5 px-3 py-1 w-fit rounded inline-block ">
+        <p class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-lg font-bold md:text-xl lg:text-2xl dark:text-white">
+          Welcome {{ businessNameKnown }}!
+        </p>
+      </span>
       <h1 class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 mb-4 text-4xl font-extrabold md:text-5xl lg:text-6xl dark:text-white">
-        {{ businessNameKnown }} Dashboard
+        Notes Dashboard
         <!-- <span class="bg-blue-100 text-blue-800 text-2xl font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-2">Free</span> -->
       </h1>
       <!-- protip -->
@@ -189,25 +205,29 @@ onMounted(() => {
         </div>
         <div class="w-full flex items-start space-x-3 mx-5">
           <v-btn ripple="false">
-            Show {{ filteredRez.length || 9 }} Results
+            Show {{ filteredNotes.length }} Results
           </v-btn>
           <v-btn v-ripple="false">
             Reset
           </v-btn>
         </div>
 
-        <div variant="plain" class="z-20 rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 !absolute !left-1/2 !top-0 text-xs font-bold  ">
+        <div variant="plain" class="z-20 rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 mx-0 !absolute !left-1/2 !top-0 text-xs font-bold  ">
           Coming Soon
         </div>
+        <!-- <div class="z-20 rounded-full text-slate-500 px-3 py-1 transform -translate-x-1/2 -translate-y-1/2 mx-0 !absolute !left-1/2 !top- text-xs font-normal italic tracking-tighter">
+          Pro tip: Use filters or search by date/page/word for quick access
+        </div> -->
       </v-container>
 
-      <v-container v-if="businessNameKnown" class="!bg-slate-100 !bg-opacity-2">
+      <v-container v-if="businessNameKnown" class="relative !bg-slate-100 !bg-opacity-2">
         <div class="opacity-90 mb-4 text-left mx-3 transition duration-300">
-          {{ `3/${notes.length}` }}
+          {{ `${filteredNotes.length}/${apiNotes.length}` }}
         </div>
+
         <v-row no-gutters>
           <v-col
-            v-for="note in notes"
+            v-for="note in apiNotes"
             :key="note.id"
             cols="12"
             sm="4"

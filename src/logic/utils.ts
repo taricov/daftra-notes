@@ -4,11 +4,9 @@ import type { Note, SecretsType } from './types'
 // const $cookies = inject<VueCookies>('$cookies')
 
 // Set Stored secrets from cookie
-export const setSecrets = ({ subdomain, apiKey, noteModuleKey, businessName, theme = 'dark' }: SecretsType): void => {
-  // eslint-disable-next-line no-console
-  console.log(subdomain, apiKey, noteModuleKey, businessName, theme)
+export const setSecrets = ({ subdomain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
   const sData = {
-    subdomain, apiKey, noteModuleKey, businessName, theme,
+    subdomain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,
   }
   // const { cookies } = useCookies()
   // cookies.set('myCoookie', 'abcdefg')
@@ -22,12 +20,10 @@ export const getSecrets = () => {
   const secrets: any = localStorage.getItem('connector-data')
   const parsedSecrets: SecretsType = JSON.parse(secrets)
 
-  // eslint-disable-next-line no-console
-  console.log(parsedSecrets)
   return parsedSecrets
 }
 
-export const filteredNotes = (notes: Note[]): Array<Note> => {
+export const currPageNotes = (notes: Note[]): Array<Note> => {
   const thisUrlPath: string = window.location.pathname
   return notes.filter((note: Note) => (note.path === '/work-orders'))
 }

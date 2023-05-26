@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { getSecrets } from '~/logic/utils'
 
-const status = ref<string>('')
-const color = ref<string>('')
+const isConnected = ref<Boolean>()
+const bizName = ref<String>('')
+const currtheme = ref<String>('')
+const currLang = ref<String>('')
+const color = ref<String>('')
 
 onMounted(() => {
-  const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets()
-  // eslint-disable-next-line no-console
-  console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
-  status.value = noteModuleKey ? 'Active' : 'Not Active'
-  color.value = status.value === 'Active' ? 'text-emerald-500' : 'text-red-500'
+  const { lang, businessName, theme, connectionStatus } = getSecrets()
+  bizName.value = businessName
+  currtheme.value = theme
+  currLang.value = lang
+  isConnected.value = connectionStatus
+  color.value = isConnected.value ? 'text-emerald-500' : 'text-red-500'
 })
 
 const openOptionsPage = () => {
@@ -35,7 +39,7 @@ const openOptionsPage = () => {
       <span class="bg-blue-100 text-blue-800 text-2xl font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-2">Free</span>
     </h1>
 
-    <p v-if="status === 'Active'" class="mb-6 text-lg font-normal lg:text-xl sm:px-16 xl:px-48 text-gray-300">
+    <p v-if="isConnected" class="mb-6 text-lg font-normal lg:text-xl sm:px-16 xl:px-48 text-gray-300">
       D-Notes is a business utility app for taking notes per page in Daftra ERP. All notes are stored securely and can be accessed from the
       <button class="underline transition-all duration-200 hover:text-sky-300" @click="openOptionsPage">
         Dashboard
@@ -43,7 +47,7 @@ const openOptionsPage = () => {
       so you would never miss what's next.
     </p>
     <button
-      else class="text-3xl text-sky-100 bg-gradient-to-r from-emerald-500 to-sky-500 background-animate rounded px-5 py-3 my-5 transition-all duration-150 font-bold hover:scale-102 transform" @click="openOptionsPage"
+      v-if="!isConnected" class="text-3xl text-sky-100 bg-gradient-to-r from-emerald-500 to-sky-500 background-animate rounded px-5 py-3 my-5 transition-all duration-150 font-bold hover:scale-102 transform" @click="openOptionsPage"
     >
       Connect Now
       <svg class="w-7 inline-block fill-sky-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>open-in-new</title><path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" /></svg>
@@ -63,7 +67,7 @@ const openOptionsPage = () => {
           Status:
         </span>
         <span :class="color">
-          {{ status }}
+          {{ isConnected ? "Active" : "Disconnected" }}
         </span>
       </div>
     </div>

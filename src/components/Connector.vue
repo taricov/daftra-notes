@@ -1,10 +1,14 @@
+<!-- eslint-disable unused-imports/no-unused-vars -->
 <script setup lang="ts">
 import { getSecrets, setSecrets } from '../logic/utils'
 import type { SecretsType } from '../logic/types'
+import { CreateNoteModule, GetAllWorkflows, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
 const isConnected = ref<boolean>(false)
+const snackbar = ref<boolean>(false)
+const connectPanel = ref<Array<String>>([])
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
 const accountKeys = ref<SecretsType>({
@@ -12,34 +16,89 @@ const accountKeys = ref<SecretsType>({
   apiKey: '',
   noteModuleKey: '',
   businessName: '',
-  theme: '',
+  theme: 'dark',
+  lang: 'en',
+  connectionStatus: true,
+  notesCount: 0,
 })
 
-onMounted(() => {
-  const { noteModuleKey } = getSecrets()
-  isConnected.value = !!noteModuleKey
+onMounted(async () => {
+  try {
+    isConnected.value = true
+    const { subdomain, noteModuleKey, apiKey } = getSecrets()
+    accountKeys.value.noteModuleKey = noteModuleKey
+    accountKeys.value.subdomain = subdomain
+    accountKeys.value.apiKey = apiKey
+    const testConn = await GetNotes()
+    loading.value = true
+    if (!testConn.ok)
+      isConnected.value = false
+    console.log('we r live!')
+  }
+  catch (err) {
+    console.error(err)
+  }
 })
 async function submit() {
-  setSecrets(accountKeys.value)
+  // loading...
   loading.value = true
-  setTimeout(() => {
+  const { subdomain, apiKey } = accountKeys.value
+  // Site info based on user inputs
+  const siteData = await GetSiteInfo({ subdomain, apiKey })
+  accountKeys.value.businessName = siteData.data.Site.business_name
+  // Create a new workflow for notes
+  const noteModule = await CreateNoteModule({ subdomain, apiKey })
+  console.log(noteModule)
+  if (noteModule.ok) {
+    // Fetching module entity_key
+    const noteModuleKey = await GetAllWorkflows({ subdomain, apiKey })
+    accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
+    // Set Secrets
+    setSecrets(accountKeys.value)
+    isConnected.value = true
     loading.value = false
-  }, 2000)
+    connectPanel.value = []
+    console.log('all set!')
+  }
 }
 </script>
 
 <template>
+  <v-snackbar
+    v-model="snackbar"
+    multi-line
+    class="z-[1000000]"
+    timeout="5000"
+    color="light-blue-darken-4"
+  >
+    <div class="font-bold">
+      You are connected!
+    </div>
+    <div class="">
+      This button is disabled for security reasons and will not be re-activated unless you reset the connection from the lock 🔐 button.
+    </div>
+
+    <template #actions>
+      <v-btn
+        class="!bg-sky-300 !bg-opacity-50 !text-emerald-900"
+        variant="text"
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
   <v-expansion-panels
+    v-model="connectPanel"
     :disabled="isDisabled"
-    is-active="true"
     :readonly="isConnected"
     class="!w-9/12 m-auto !bg-opacity-5 mb-5"
   >
-    <v-expansion-panel class="!bg-opacity-5 !bg-sky-100 !text-sky-200">
-      <v-expansion-panel-title class="bg-opacity-20 !text-center">
-        <div v-if="isConnected" class="w-full text-center flex items-center justify-center space-x-3">
-          <span>Connect
-          </span>
+    <v-expansion-panel value="connect" class="!bg-opacity-5 !bg-sky-100 !text-sky-200">
+      <v-expansion-panel-title expand-icon="false" collapse-icon="false" class="bg-opacity-20 !text-center" @click="isConnected ? snackbar = true : snackbar = false">
+        <div v-if="isConnected" class="w-full text-center flex items-center justify-center space-x-2 ml-5">
+          <b>Connected
+          </b>
           <span class="m-0">
             <svg class="w-6 fill-emerald-600 rounded-full bg-emerald-600 bg-opacity-5 p-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Connected</title><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
           </span>

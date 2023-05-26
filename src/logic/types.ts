@@ -31,4 +31,7 @@ export interface SecretsType {
   noteModuleKey: string
   businessName: string
   theme: string
+  lang: string
+  connectionStatus: boolean
+  notesCount: number
 }

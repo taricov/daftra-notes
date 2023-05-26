@@ -1,20 +1,20 @@
 import { getSecrets } from './utils'
-import type { NoteDataApi, WorkflowDataApi } from './types'
+import type { NoteDataApi, SecretsType, WorkflowDataApi } from './types'
 
 // Get All Workflows
-export const GetAllWorkflows = async (apiK: string, subD: string): Promise<string> => {
-  const res: Response = await fetch(`https://${subD}.daftra.com/api/v2/entity/workflow_types`, {
+export const GetAllWorkflows = async ({ subdomain, apiKey }: Pick<SecretsType, 'subdomain' | 'apiKey'>): Promise<Response> => {
+  const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type/list`, {
     headers: {
       'Content-Type': 'application/json',
-      'apiKey': apiK,
+      'apiKey': apiKey,
     },
   })
   const data = await res.json()
-  return data.data[0].entity_key
+  return data
 }
 // Get Site Info
-export const GetSiteInfo = async () => {
-  const { subdomain, apiKey } = getSecrets()
+export const GetSiteInfo = async ({ subdomain, apiKey }: Pick<SecretsType, 'subdomain' | 'apiKey'>): Promise<Response> => {
+  // const { subdomain, apiKey } = getSecrets()
 
   const res = await fetch(`https://${subdomain}.daftra.com/api2/site_info`, {
     headers: {
@@ -26,7 +26,7 @@ export const GetSiteInfo = async () => {
   return data
 }
 // Get Notes
-export const GetNotes = async () => {
+export const GetNotes = async (): Promise<Response> => {
   const { subdomain, apiKey, noteModuleKey } = getSecrets()
 
   const res = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${noteModuleKey}/list?per_page=100000`, {
@@ -35,12 +35,12 @@ export const GetNotes = async () => {
       'apiKey': apiKey,
     },
   })
-  const data = await res.json()
-  return data
+  // const data = await res.json()
+  return res
 }
 // Creat the D-Note Module
-export const CreateNoteModule = async (): Promise<string> => {
-  const { subdomain, apiKey } = getSecrets()
+export const CreateNoteModule = async ({ subdomain, apiKey }: Pick<SecretsType, 'subdomain' | 'apiKey'>): Promise<Response> => {
+  // const { subdomain, apiKey } = getSecrets()
   const data: WorkflowDataApi = {
     name: 'D-Notes Module',
     status: 1,
@@ -51,18 +51,19 @@ export const CreateNoteModule = async (): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apiKey': apiKey,
+      'apikey': apiKey,
     },
     body: JSON.stringify(data),
   })
+  // const result = await res.json()
+  return res
 
-  if (res.ok)
-    return 'Your Notes Module has created successfully!'
-  return res.statusText
+  // if (!res.ok)
+  //   return data.
 }
 // Create a note
-export const CreateNote = async (data: NoteDataApi): Promise<string> => {
-  const { subdomain, noteModuleKey, apiKey } = getSecrets()
+export const CreateNote = async ({ subdomain, noteModuleKey, apiKey }: Pick<SecretsType, 'subdomain' | 'noteModuleKey' | 'apiKey'>, data: NoteDataApi): Promise<string> => {
+  // const { subdomain, noteModuleKey, apiKey } = getSecrets()
 
   const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${noteModuleKey}`, {
     method: 'POST',
