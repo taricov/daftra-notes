@@ -69,7 +69,7 @@ export const CreateNote = async ({ subdomain, noteModuleKey, apiKey }: Pick<Secr
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apiKey': apiKey,
+      'apikey': apiKey,
     },
     body: JSON.stringify(data),
   })

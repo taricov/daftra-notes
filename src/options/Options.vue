@@ -1,3 +1,4 @@
+<!-- eslint-disable unused-imports/no-unused-vars -->
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import 'vuetify/styles'
@@ -38,7 +39,7 @@ onMounted(async () => {
   filteredNotes.value = filterNotes()
   try {
     const { subdomain, businessName, apiKey, noteModuleKey, theme, lang } = getSecrets()
-    console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
+    // console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
 
     businessNameKnown.value = businessName
     currtheme.value = theme

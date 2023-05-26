@@ -13,7 +13,6 @@ onMounted(() => {
   try {
     const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets() || null
     console.log(businessName)
-    console.log('from popup: ', subdomain, businessName, apiKey, noteModuleKey, theme)
 
     businessNameKnown.value = businessName || 'Notes'
     currtheme.value = theme || 'dark'
@@ -36,7 +35,7 @@ const toggleLang = () => {
 }
 const resetWarning = ref<Boolean>(false)
 const resetSecrets = () => {
-  resetWarning.value = true
+  resetWarning.value = false
   localStorage.removeItem('connector-data')
 }
 </script>

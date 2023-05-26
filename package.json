@@ -76,6 +76,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@vuepic/vue-datepicker": "^5.1.2",
+    "appwrite": "^11.0.0",
     "helmet": "^7.0.0",
     "vue-meta": "^2.4.0",
     "vuetify": "^3.3.0"

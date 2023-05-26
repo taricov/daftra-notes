@@ -2,19 +2,14 @@
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import notes from '../../fakedata'
-import { currPageNotes } from '../../logic/utils'
+import { currPageNotes, getSecrets } from '../../logic/utils'
 // import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
-import type { Note } from '../../logic/types'
+import type { Note, NoteDataApi } from '../../logic/types'
+import { CreateNote } from '~/logic/daftraApi'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
-// const apiNotes = ref<Note[]>([])
-
-// const apiKey = ref<any >('24b476fdd8aa43091e0963ba01b98762155c9dd4')
-// const siteDomain = ref<any>('taricov')
-
-// const siteInfo = ref<object | null>(null)
-// const thisPagePath: string = window.location.pathname
+const apiNotes = ref<Note[]>([])
 
 filtered.value = currPageNotes(notes)
 
@@ -23,13 +18,28 @@ const form = ref<HTMLFormElement>()
 const isLoading = ref<boolean>(false)
 const drawer = ref<boolean>(false)
 const newNote = ref<string>('')
+
 const toggleDrawer = (): void => {
   drawer.value = !drawer.value
   noteTextarea.value?.focus()
 }
+
+onMounted(async () => {
+
+})
 const addNote = (): void => {
-  // CreateNote()
-  // console.log(newNote.value)
+  const { subdomain, noteModuleKey, apiKey } = getSecrets()
+  const data: NoteDataApi = {
+    number: 1,
+    id: 1,
+    title: `note: ${apiNotes.length}`,
+    start_date: new Date(),
+    description: newNote.value,
+
+  }
+  CreateNote({ subdomain, noteModuleKey, apiKey }, data)
+  // eslint-disable-next-line no-console
+  console.log(JSON.stringify(data))
   form.value?.reset()
 }
 const keys = useMagicKeys()

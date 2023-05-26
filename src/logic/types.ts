@@ -1,8 +1,8 @@
 export interface NoteDataApi {
-  number: Number
+  number: number
   id: number
   title: string
-  start_date: string
+  start_date: Date
   description: string
 }
 

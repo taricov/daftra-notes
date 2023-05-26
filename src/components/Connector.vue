@@ -1,8 +1,9 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script setup lang="ts">
-import { getSecrets, setSecrets } from '../logic/utils'
+import { getSecrets } from '../logic/utils'
 import type { SecretsType } from '../logic/types'
-import { CreateNoteModule, GetAllWorkflows, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
+import { CreateUser, GetAllUsers } from '../logic/dbSDK'
+import { CreateNoteModule, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
@@ -51,16 +52,20 @@ async function submit() {
   const { subdomain, apiKey } = accountKeys.value
   // Site info based on user inputs
   const siteData = await GetSiteInfo({ subdomain, apiKey })
-  accountKeys.value.businessName = siteData.data.Site.business_name
-  // Create a new workflow for notes
+  CreateUser({ business_name: '2' })
+  const connectionTest = await GetAllUsers
+  console.log(connectionTest)
   const noteModule = await CreateNoteModule({ subdomain, apiKey })
   console.log(noteModule)
+
+  // accountKeys.value.businessName = siteData.data.Site.business_name
+  // Create a new workflow for notes
   if (noteModule.ok) {
     // Fetching module entity_key
-    const noteModuleKey = await GetAllWorkflows({ subdomain, apiKey })
-    accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
+    // const noteModuleKey = await GetAllWorkflows({ subdomain, apiKey })
+    // accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
     // Set Secrets
-    setSecrets(accountKeys.value)
+    // CreateUser(accountKeys.value)
     isConnected.value = true
     loading.value = false
     connectPanel.value = []
