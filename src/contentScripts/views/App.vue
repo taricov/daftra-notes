@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
+import newNoteSound from '../../assets/sound effects/newNote.mp3'
 import notes from '../../fakedata'
-import { currPageNotes, getSecrets } from '../../logic/utils'
+import { currPageNotes } from '../../logic/utils'
 // import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
 import type { Note, NoteDataApi } from '../../logic/types'
-import { CreateNote } from '~/logic/daftraApi'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
@@ -28,18 +28,20 @@ onMounted(async () => {
 
 })
 const addNote = (): void => {
-  const { subdomain, noteModuleKey, apiKey } = getSecrets()
+  // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
   const data: NoteDataApi = {
     number: 1,
     id: 1,
-    title: `note: ${apiNotes.length}`,
+    title: `note: ${[apiNotes].length}`,
     start_date: new Date(),
     description: newNote.value,
-
   }
-  CreateNote({ subdomain, noteModuleKey, apiKey }, data)
+  const msgSound: any = new Audio(newNoteSound)
+  msgSound.play()
+  // CreateNote({ sub_domain, noteModuleKey, apiKey }, data)
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(data))
+  notes.push(data)
   form.value?.reset()
 }
 const keys = useMagicKeys()

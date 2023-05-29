@@ -1,10 +1,10 @@
 {
-  "name": "vitesse-webext",
-  "displayName": "Vitesse WebExt",
+  "name": "d-notes",
+  "displayName": "D-Notes",
   "version": "0.0.1",
   "private": true,
   "packageManager": "pnpm@7.29.0",
-  "description": "[description]",
+  "description": "A Utility and Extension App for note-taking on top of Daftra ERP",
   "scripts": {
     "dev": "npm run clear && cross-env NODE_ENV=development run-p dev:*",
     "dev:prepare": "esno scripts/prepare.ts",

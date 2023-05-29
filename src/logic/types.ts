@@ -27,11 +27,20 @@ export interface Note {
 
 export interface SecretsType {
   sub_domain: string
-  apiKey: string
-  noteModuleKey: string
   businessName: string
-  theme: string
-  lang: string
-  connectionStatus: boolean
-  notesCount: number
+}
+export interface SecretsTypes {
+  userSub: string
+  userEmail: string
+  apikey: string
+  noteModuleKey: string
+  // theme: string
+  // lang: string
+  // notesCount: number
+}
+export interface User {
+  userSub: string
+  userEmail: string
+  apikey: string
+  noteModuleKey: string
 }

@@ -1,13 +1,15 @@
 // import { useCookies } from 'vue3-cookies'
-import type { Note, SecretsType } from './types'
+import type { Note, SecretsTypes } from './types'
 
 // const $cookies = inject<VueCookies>('$cookies')
 
 // Set Stored secrets from cookie
-export const setSecrets = ({ sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
-  const sData = {
-    sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,
-  }
+export const setSecrets = ({ userEmail, userSub }: SecretsTypes): void => {
+  const sData = { userEmail, userSub }
+  // export const setSecrets = ({ sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
+  //   const sData = {
+  //     sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,
+  //   }
   // const { cookies } = useCookies()
   // cookies.set('myCoookie', 'abcdefg')
   // cookies.set('myCoookie2', JSON.stringify(sData))
@@ -16,9 +18,9 @@ export const setSecrets = ({ sub_domain, apiKey, noteModuleKey, businessName, th
 }
 
 // Get Stored Secrets
-export const getSecrets = () => {
-  const secrets: any = localStorage.getItem('connector-data')
-  const parsedSecrets: SecretsType = JSON.parse(secrets)
+export const getSecrets = (): SecretsTypes => {
+  const secrets: string = localStorage.getItem('connector-data') ?? '{}'
+  const parsedSecrets: SecretsTypes = JSON.parse(secrets)
 
   return parsedSecrets
 }

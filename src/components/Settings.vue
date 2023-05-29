@@ -3,7 +3,7 @@
 import { getSecrets } from '~/logic/utils'
 
 defineProps({ openSettings: Boolean })
-const connected = ref<boolean>(false)
+// const connected = ref<boolean>(false)
 
 const businessNameKnown = ref<string | null>(null)
 const currtheme = ref<string | null>(null)
@@ -11,15 +11,14 @@ const currLang = ref<string>('en')
 
 onMounted(() => {
   try {
-    const { subdomain, businessName, apiKey, noteModuleKey, theme } = getSecrets() || null
-    console.log(businessName)
+    const { userSub } = getSecrets()
 
-    businessNameKnown.value = businessName || 'Notes'
-    currtheme.value = theme || 'dark'
-    connected.value = !!noteModuleKey
+    businessNameKnown.value = userSub || 'Notes'
+    // currtheme.value = theme || 'dark'
+    // connected.value = !!noteModuleKey
   }
   catch (err) {
-    console.error(err)
+    console.log(err)
   }
 })
 

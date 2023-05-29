@@ -32,18 +32,18 @@ function openSettingsFn() {
 }
 
 const businessNameKnown = ref<string | null>(null)
-const currtheme = ref<string | null>(null)
-const currLang = ref<string>('en')
+// const currtheme = ref<string | null>(null)
+// const currLang = ref<string>('en')
 
 onMounted(async () => {
   filteredNotes.value = filterNotes()
   try {
-    const { sub_domain, businessName, apiKey, noteModuleKey, theme, lang } = getSecrets()
-    // console.log('from popup: ', sub_domain, businessName, apiKey, noteModuleKey, theme)
+    const { userSub } = getSecrets()
+    // console.log('from popup: ', userSub, businessName, apiKey, noteModuleKey, theme)
 
-    businessNameKnown.value = businessName
-    currtheme.value = theme
-    currLang.value = lang
+    businessNameKnown.value = userSub || null
+    // currtheme.value = theme
+    // currLang.value = lang
 
     const reqNotes = await GetNotes()
     apiNotes.value = reqNotes.data

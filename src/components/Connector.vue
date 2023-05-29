@@ -1,9 +1,8 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script setup lang="ts">
 import { getSecrets } from '../logic/utils'
-import type { SecretsType } from '../logic/types'
-import { CreateUser } from '../logic/dbSDK'
-import { CreateNoteModule, GetAllWorkflows, GetNotes, GetSiteInfo } from '~/logic/daftraApi'
+import { CreateUser, GetUser } from '../logic/dbSDK'
+import { CreateNoteModule, GetAllWorkflows, GetSiteInfo } from '~/logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
@@ -12,31 +11,36 @@ const snackbar = ref<boolean>(false)
 const connectPanel = ref<Array<String>>([])
 const freshInstall = ref<boolean>(true)
 const loading = ref<boolean>(false)
-const accountKeys = ref<SecretsType>({
-  sub_domain: '',
-  apiKey: '',
+// const accountKeys = ref<SecretsTypes>({
+//   // theme: 'dark',
+//   // lang: 'en',
+// })
+const userSecrets = ref<{ userEmail: string; apikey: string; noteModuleKey: string; userSub: string }>({
+  apikey: '',
+  userSub: '',
+  userEmail: '',
   noteModuleKey: '',
-  businessName: '',
-  theme: 'dark',
-  lang: 'en',
-  connectionStatus: true,
-  notesCount: 0,
+  // theme: 'dark',
+  // lang: 'en',
+  // notesCount: 0,
 })
 
 onMounted(async () => {
   try {
     isConnected.value = true
-    const { sub_domain, noteModuleKey, apiKey } = getSecrets()
-    if (!sub_domain)
+    const { userEmail, userSub } = getSecrets()
+    console.log(userEmail)
+    if (!userEmail)
       isConnected.value = false
-    accountKeys.value.noteModuleKey = noteModuleKey
-    accountKeys.value.sub_domain = sub_domain
-    accountKeys.value.apiKey = apiKey
-    const testConn = await GetNotes()
-    loading.value = true
-    if (!testConn.ok)
-      isConnected.value = false
-    console.log('we r live!')
+    userSecrets.value.userEmail = userEmail
+    userSecrets.value.userSub = userSub
+    const user: any = GetUser(userSecrets.value.userEmail)
+    console.log(user)
+    // const testConn = await GetNotes()
+    // loading.value = true
+    // if (!testConn.ok)
+    //   isConnected.value = false
+    // console.log('we r live!')
   }
   catch (err) {
     console.error(err)
@@ -49,24 +53,24 @@ onMounted(async () => {
 async function submit() {
   // loading...
   loading.value = true
-  const { sub_domain, apiKey } = accountKeys.value
+  const { apikey, userSub } = userSecrets.value
   // Site info based on user inputs
 
-  const siteData = await GetSiteInfo({ sub_domain, apiKey })
+  const siteData = await GetSiteInfo({ userSub, apikey })
   const { id, business_name, first_name, last_name, subdomain, address1, address2, city, state, phone1, phone2, country_code, currency_code, email, bn1 } = await siteData.data.Site
 
   try {
-    const noteModule = await CreateNoteModule({ sub_domain, apiKey })
+    const noteModule = await CreateNoteModule({ userSub, apikey })
     console.log(noteModule)
   }
   catch (err) {
     console.log(err, 'Something went wrong! Please try again')
   }
   // Fetching module entity_key
-  const noteModuleKey = await GetAllWorkflows({ sub_domain, apiKey })
-  accountKeys.value.noteModuleKey = noteModuleKey.data[0].entity_key
+  const moduleKey = await GetAllWorkflows({ userSub, apikey })
+  userSecrets.value.noteModuleKey = moduleKey.data[0].entity_key
 
-  const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: accountKeys.value.apiKey, note_module_key: accountKeys.value.noteModuleKey, prefer_dark: true })
+  const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: userSecrets.value.apikey, note_module_key: userSecrets.value.noteModuleKey, prefer_dark: true })
 
   if (userCreated.ok) {
     isConnected.value = true
@@ -125,12 +129,12 @@ async function submit() {
         <v-sheet max-width="1000" class="mx-auto bg-transparent ">
           <v-form validate-on="submit lazy" @submit.prevent="submit">
             <v-text-field
-              v-model="accountKeys.sub_domain"
+              v-model="userSecrets.userSub"
               label="Daftra Subdomain"
               variant="underlined"
             />
             <v-text-field
-              v-model="accountKeys.apiKey"
+              v-model="userSecrets.apikey"
               label="Api Key"
               variant="underlined"
             />
@@ -148,7 +152,7 @@ async function submit() {
 
             <v-text-field
               v-if="!freshInstall"
-              v-model="accountKeys.noteModuleKey"
+              v-model="userSecrets.noteModuleKey"
               label="Module Key"
               variant="underlined"
             />
