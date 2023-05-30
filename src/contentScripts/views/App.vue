@@ -15,7 +15,7 @@ const apiNotes = ref<Note[]>([])
 filtered.value = currPageNotes(notes)
 
 const noteTextarea = ref<HTMLTextAreaElement>()
-const notingDisabled = ref<boolean>(false)
+const notingDisabled = ref<boolean>(true)
 const userSubb = ref<string>('')
 const apikey = ref<string>('')
 const moduleKey = ref<string>('')
@@ -34,8 +34,10 @@ onMounted(async () => {
 
   // isConnected.value = connectionStatus
   const user: User = await GetUser('email', userEmail)
+  // eslint-disable-next-line no-console
+  console.log(user)
   if (!user.total > 0)
-    notingDisabled.value = true
+    notingDisabled.value = false
 
   userSubb.value = userSub
   moduleKey.value = user.documents[0].noteModuleKey
@@ -46,7 +48,7 @@ onMounted(async () => {
 const addNote = (): void => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
   const today = new Date()
-  const formattedToday = today.toLocaleString().split('T')[0]
+  const formattedToday = today.toISOString().split('T')[0]
   const thisPath: string = window.location.pathname
   const data: NoteDataApi = {
     number: 1,
@@ -54,8 +56,8 @@ const addNote = (): void => {
     title: `Note no. ${[apiNotes].length}`,
     start_date: formattedToday,
     description: `${newNote.value}|path:${thisPath}`,
-    // staff_id: API REQ site_info, ------- user
-    // description: newNote.value, ------- path
+    staff_id: '0',
+
   }
   const msgSound: any = new Audio(newNoteSound)
   msgSound.play()
