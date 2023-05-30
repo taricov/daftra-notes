@@ -1,11 +1,14 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script setup lang="ts">
-import { getSecrets } from '../logic/utils'
+import connectSound from '../assets/sound effects/connected2.mp3'
+import { getSecrets, setSecrets } from '../logic/utils'
 import { CreateUser, GetUser } from '../logic/dbSDK'
+import type { User } from '../logic/types'
 import { CreateNoteModule, GetAllWorkflows, GetSiteInfo } from '~/logic/daftraApi'
 /* eslint no-console: */
 // const panel = ref<number[]>([1, 0])
 const isDisabled = ref<boolean>(false)
+const returnedError = ref<any>()
 const isConnected = ref<boolean>(false)
 const snackbar = ref<boolean>(false)
 const connectPanel = ref<Array<String>>([])
@@ -26,59 +29,88 @@ const userSecrets = ref<{ userEmail: string; apikey: string; noteModuleKey: stri
 })
 
 onMounted(async () => {
-  try {
-    isConnected.value = true
-    const { userEmail, userSub } = getSecrets()
-    console.log(userEmail)
-    if (!userEmail)
-      isConnected.value = false
+  // isConnected.value = true
+  const { userEmail, userSub } = getSecrets()
+  // console.log(userEmail, userSub)
+  // checking for user secret
+  if (userSub) {
+    console.log('we!')
     userSecrets.value.userEmail = userEmail
     userSecrets.value.userSub = userSub
-    const user: any = GetUser(userSecrets.value.userEmail)
-    console.log(user)
-    // const testConn = await GetNotes()
-    // loading.value = true
-    // if (!testConn.ok)
-    //   isConnected.value = false
-    // console.log('we r live!')
-  }
-  catch (err) {
-    console.error(err)
-  }
-  finally {
-    if (!getSecrets())
-      isConnected.value = false
+    isConnected.value = true
+    // GET user data
+    const user: any = await GetUser('email', userSecrets.value.userEmail)
+    console.log('existing user: ', user)
+
+    if (user.total > 0) {
+      userSecrets.value.noteModuleKey = user.noteModuleKey
+      userSecrets.value.apikey = user.apikey
+      console.log('we r live!')
+    }
+
+    if (user.total === 0)
+      // isConnected.value = false
+      loading.value = false
   }
 })
 async function submit() {
   // loading...
+  returnedError.value = ''
   loading.value = true
-  const { apikey, userSub } = userSecrets.value
-  // Site info based on user inputs
-
-  const siteData = await GetSiteInfo({ userSub, apikey })
-  const { id, business_name, first_name, last_name, subdomain, address1, address2, city, state, phone1, phone2, country_code, currency_code, email, bn1 } = await siteData.data.Site
-
-  try {
-    const noteModule = await CreateNoteModule({ userSub, apikey })
-    console.log(noteModule)
+  const connecedSound = new Audio(connectSound)
+  const { apikey, userSub, userEmail } = userSecrets.value
+  if (userEmail === getSecrets().userEmail && userSub === getSecrets().userSub) {
   }
-  catch (err) {
-    console.log(err, 'Something went wrong! Please try again')
-  }
-  // Fetching module entity_key
-  const moduleKey = await GetAllWorkflows({ userSub, apikey })
-  userSecrets.value.noteModuleKey = moduleKey.data[0].entity_key
+  const user: User = await GetUser('subdomain', userSub)
+  console.log('existing user: ', user)
+  if (+user.total === 0) {
+    // Site info based on user inputs - if user does not exist
+    // if (!user.ok) {
+    const siteData = await GetSiteInfo({ userSub, apikey })
+    if (!siteData.ok) {
+      loading.value = false
+      userSecrets.value.userSub = ''
+      userSecrets.value.apikey = ''
+      // connectPanel.value = []
 
-  const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: userSecrets.value.apikey, note_module_key: userSecrets.value.noteModuleKey, prefer_dark: true })
+      returnedError.value = 'Either the domain or the API key is not valid! Please try again'
+    }
+    const { id, business_name, first_name, last_name, subdomain, address1, address2, city, state, phone1, phone2, country_code, currency_code, email, bn1 } = await siteData.data.Site
+    userSecrets.value.userEmail = email
+    try {
+      const noteModule = await CreateNoteModule({ userSub, apikey })
+      console.log(noteModule)
+    }
+    catch (err) {
+      console.log(err, 'Something went wrong! Please try again')
+    }
+    // Fetching module entity_key
+    const moduleKey = await GetAllWorkflows({ userSub, apikey })
+    userSecrets.value.noteModuleKey = moduleKey.data[0].entity_key
 
-  if (userCreated.ok) {
-    isConnected.value = true
-    loading.value = false
-    connectPanel.value = []
-    console.log('all set!')
+    const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: userSecrets.value.apikey, note_module_key: userSecrets.value.noteModuleKey, prefer_dark: true })
+
+    connecedSound.play()
+    setSecrets(userSecrets.value)
+    console.log('user created successfully')
   }
+  userSecrets.value.noteModuleKey = user.documents[0].noteModuleKey
+  userSecrets.value.userEmail = user.documents[0].email
+  isConnected.value = true
+  loading.value = false
+  connectPanel.value = []
+  setSecrets(userSecrets.value)
+  console.log('user fetched successfully')
+  await connecedSound.play()
 }
+
+// if (userCreated.ok) {
+//   setSecrets(userSecrets.value)
+//   isConnected.value = true
+//   loading.value = false
+//   connectPanel.value = []
+//   console.log('all set!')
+// }
 </script>
 
 <template>
@@ -169,11 +201,14 @@ async function submit() {
         </v-sheet>
       </v-expansion-panel-text>
     </v-expansion-panel>
+    <div class="mt-3 text-red-500">
+      {{ returnedError }}
+    </div>
   </v-expansion-panels>
 </template>
 
 <style scoped>
 /* .v-expansion-panel-title__overlay{
-    @apply !text-center
+  @apply !text-center
 } */
 </style>

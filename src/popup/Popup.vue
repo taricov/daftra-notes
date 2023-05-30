@@ -1,19 +1,25 @@
 <script setup lang="ts">
+import { GetUser } from '~/logic/dbSDK'
+import type { User } from '~/logic/types'
 import { getSecrets } from '~/logic/utils'
 
 const isConnected = ref<Boolean>()
 const bizName = ref<String>('')
-const currtheme = ref<String>('')
-const currLang = ref<String>('')
+// const currtheme = ref<String>('')
+// const currLang = ref<String>('')
 const color = ref<String>('')
 
-onMounted(() => {
-  const { lang, businessName, theme, connectionStatus } = getSecrets()
-  bizName.value = businessName
-  currtheme.value = theme
-  currLang.value = lang
-  isConnected.value = connectionStatus
-  color.value = isConnected.value ? 'text-emerald-500' : 'text-red-500'
+onMounted(async () => {
+  const { userEmail, userSub } = getSecrets()
+  bizName.value = userSub
+  // currtheme.value = theme
+  // currLang.value = lang
+  // isConnected.value = connectionStatus
+  const user: User = await GetUser('email', userEmail)
+  if (user.total > 0) {
+    isConnected.value = true
+    color.value = isConnected.value ? 'text-emerald-500' : 'text-red-500'
+  }
 })
 
 const openOptionsPage = () => {

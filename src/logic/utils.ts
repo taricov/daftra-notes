@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // import { useCookies } from 'vue3-cookies'
 import type { Note, SecretsTypes } from './types'
 
@@ -6,6 +7,7 @@ import type { Note, SecretsTypes } from './types'
 // Set Stored secrets from cookie
 export const setSecrets = ({ userEmail, userSub }: SecretsTypes): void => {
   const sData = { userEmail, userSub }
+  console.log({ userEmail, userSub })
   // export const setSecrets = ({ sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount }: SecretsType): void => {
   //   const sData = {
   //     sub_domain, apiKey, noteModuleKey, businessName, theme, lang, connectionStatus, notesCount,

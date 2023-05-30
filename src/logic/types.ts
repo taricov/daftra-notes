@@ -2,7 +2,7 @@ export interface NoteDataApi {
   number: number
   id: number
   title: string
-  start_date: Date
+  start_date: string
   description: string
 }
 
@@ -38,9 +38,11 @@ export interface SecretsTypes {
   // lang: string
   // notesCount: number
 }
-export interface User {
-  userSub: string
-  userEmail: string
-  apikey: string
-  noteModuleKey: string
-}
+export type User = Record<string, string>
+
+// export interface User<T> {
+// userSub: string
+// userEmail: string
+// apikey: string
+// noteModuleKey: string
+// }

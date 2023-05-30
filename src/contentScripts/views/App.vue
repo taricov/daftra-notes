@@ -3,9 +3,10 @@ import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import newNoteSound from '../../assets/sound effects/newNote.mp3'
 import notes from '../../fakedata'
-import { currPageNotes } from '../../logic/utils'
-// import { CreateNote, deleteNote, UpdateNote } from '../../logic/daftraApi'
-import type { Note, NoteDataApi } from '../../logic/types'
+import { CreateNote, GetNotes } from '../../logic/daftraApi'
+import { currPageNotes, getSecrets } from '../../logic/utils'
+import type { Note, NoteDataApi, User } from '../../logic/types'
+import { GetUser } from '~/logic/dbSDK'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
@@ -14,6 +15,10 @@ const apiNotes = ref<Note[]>([])
 filtered.value = currPageNotes(notes)
 
 const noteTextarea = ref<HTMLTextAreaElement>()
+const notingDisabled = ref<boolean>(false)
+const userSubb = ref<string>('')
+const apikey = ref<string>('')
+const moduleKey = ref<string>('')
 const form = ref<HTMLFormElement>()
 const isLoading = ref<boolean>(false)
 const drawer = ref<boolean>(false)
@@ -25,23 +30,39 @@ const toggleDrawer = (): void => {
 }
 
 onMounted(async () => {
+  const { userEmail, userSub } = getSecrets()
 
+  // isConnected.value = connectionStatus
+  const user: User = await GetUser('email', userEmail)
+  if (!user.total > 0)
+    notingDisabled.value = true
+
+  userSubb.value = userSub
+  moduleKey.value = user.documents[0].noteModuleKey
+  apikey.value = user.documents[0].apikey
+  const allNotes = await GetNotes()
+  apiNotes.value = allNotes.data
 })
 const addNote = (): void => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
+  const today = new Date()
+  const formattedToday = today.toLocaleString().split('T')[0]
+  const thisPath: string = window.location.pathname
   const data: NoteDataApi = {
     number: 1,
     id: 1,
-    title: `note: ${[apiNotes].length}`,
-    start_date: new Date(),
-    description: newNote.value,
+    title: `Note no. ${[apiNotes].length}`,
+    start_date: formattedToday,
+    description: `${newNote.value}|path:${thisPath}`,
+    // staff_id: API REQ site_info, ------- user
+    // description: newNote.value, ------- path
   }
   const msgSound: any = new Audio(newNoteSound)
   msgSound.play()
-  // CreateNote({ sub_domain, noteModuleKey, apiKey }, data)
+  const secrets: any = { userSubb, moduleKey, apikey }
+  CreateNote(secrets, data)
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(data))
-  notes.push(data)
   form.value?.reset()
 }
 const keys = useMagicKeys()
@@ -120,7 +141,7 @@ whenever(keys['='], () => {
             <v-container class="!bg-slate-100 !bg-opacity-2">
               <v-row no-gutters>
                 <v-col
-                  v-for="note in notes.slice(0, 6)"
+                  v-for="note in apiNotes.slice(0, 6)"
                   :key="note.id"
                   cols="6"
                   sm="4"
@@ -145,6 +166,7 @@ whenever(keys['='], () => {
           <v-textarea
             ref="noteTextarea"
             v-model="newNote"
+            :disabled="notingDisabled"
             required
             no-resize
             label="Press Shift + Enter to add notes"

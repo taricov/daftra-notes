@@ -35,6 +35,9 @@ const toggleLang = () => {
 const resetWarning = ref<Boolean>(false)
 const resetSecrets = () => {
   resetWarning.value = false
+  setTimeout(() => {
+    window.location.reload()
+  }, 1000)
   localStorage.removeItem('connector-data')
 }
 </script>
