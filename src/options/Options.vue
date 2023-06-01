@@ -2,12 +2,15 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import 'vuetify/styles'
-import { getSecrets } from '~/logic/utils'
-import type { Note } from '~/logic/types'
+import type { Note, User } from '~/logic/types'
 import { GetNotes } from '~/logic/daftraApi'
+import { GetUser } from '~/logic/dbSDK'
 
-const apiNotes = ref<Note[]>([])
+const apiNotes = ref<any>([])
 const filteredNotes = ref<Note[]>([])
+const loadingNotes = ref<Boolean>(false)
+const userE = ref<any>('')
+const isConnected = ref<any>(true)
 const allTags = ref<String[]>(['work', 'invoice', 'inquiry', 'new hire'])
 const allColors = ref<Array<{ label: String; afterEl: String }>>([
   { label: 'red', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-red-400 relative' },
@@ -19,12 +22,16 @@ const selectedColors = ref<String[]>([])
 const allPeriods = ref<String[]>(['Last Hour', 'Yesterday', 'Last 5 days', 'Last Week', 'Last 30 days'])
 const allRoutes = ref<String[]>(['/work-order', '/dashboard', '/invoices', '/invoices/23'])
 const selectedRoutes = ref<String[]>([])
+const apikey = ref<string>('')
+const subD = ref<string>('')
+const moduleKey = ref<string>('')
+
 const dateFrom = ref()
 const dateTo = ref()
 
-const filterNotes = () => {
-  return Array(Math.floor(Math.random() * 100))
-}
+// const filterNotes = () => {
+//   return Array(Math.floor(Math.random() * 100))
+// }
 
 const openSettings = ref<boolean>(false)
 function openSettingsFn() {
@@ -36,21 +43,45 @@ const businessNameKnown = ref<string | null>(null)
 // const currLang = ref<string>('en')
 
 onMounted(async () => {
-  filteredNotes.value = filterNotes()
-  try {
-    const { userSub } = getSecrets()
-    // console.log('from popup: ', userSub, businessName, apiKey, noteModuleKey, theme)
-
-    businessNameKnown.value = userSub || null
-    // currtheme.value = theme
-    // currLang.value = lang
-
-    const reqNotes = await GetNotes()
-    apiNotes.value = reqNotes.data
+  function getStorageValuePromise(key: string) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get(key, resolve)
+    })
   }
-  catch (err) {
-    console.log(err)
+
+  const chromeStorage1: any = await getStorageValuePromise('conn')
+  const chromeStorage2: any = await getStorageValuePromise('email')
+
+  isConnected.value = chromeStorage1.conn
+  userE.value = chromeStorage2.email
+  console.log(userE.value, isConnected.value)
+  // const { userEmail, noteModuleKey, userSub, apikey } = getSecrets()
+  loadingNotes.value = true
+  if (isConnected && userE.value) {
+    const user: User = await GetUser('email', userE.value)
+    console.log(user.documents[0])
+    moduleKey.value = user.documents[0].note_module_key
+    apikey.value = user.documents[0].api_key
+    subD.value = user.documents[0].subdomain
+    businessNameKnown.value = user.documents[0].subdomain || null
+    console.log(apikey.value, moduleKey.value)
+    const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
+    const allNotes = await allNotesReq.json()
+    apiNotes.value = allNotes.data
+    console.log(apiNotes.value)
+    loadingNotes.value = false
   }
+  // filteredNotes.value = filterNotes()
+  // try {
+  // console.log('from popup: ', userSub, businessName, apiKey, noteModuleKey, theme)
+
+  // currtheme.value = theme
+  // currLang.value = lang
+
+  // }
+  // catch (err) {
+  //   console.log(err)
+  // }
 })
 </script>
 
@@ -233,7 +264,10 @@ onMounted(async () => {
             cols="12"
             sm="4"
           >
-            <VueCard class="m-2" :num="+note.id" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+            <v-progress-circular v-show="loadingNotes" indeterminate color="white" />
+
+            <VueCard v-if="businessNameKnown" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+            <!-- <VueCard class="m-2" :num="+note.id" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
           </v-col>
         </v-row>
       </v-container>

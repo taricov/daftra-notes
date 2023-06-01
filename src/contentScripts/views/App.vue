@@ -6,11 +6,11 @@ import newNoteSound from '../../assets/sound effects/newNote.mp3'
 // import notes from '../../fakedata'
 import { CreateNote, GetNotes } from '../../logic/daftraApi'
 // import { currPageNotes } from '../../logic/utils'
-import type { Note, NoteDataApi, User } from '../../logic/types'
+import type { NoteDataApi, User } from '../../logic/types'
 import { GetUser } from '~/logic/dbSDK'
 
 const tabs = ref<any>('recently-added')
-const filtered = ref<Note[]>([])
+// const filtered = ref<Note[]>([])
 const apiNotes = ref<any>([])
 // const apiNotes = ref<Note[]>([])
 
