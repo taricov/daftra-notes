@@ -26,8 +26,8 @@ export const GetSiteInfo = async ({ userSub, apikey }: Pick<SecretsTypes, 'userS
   return data
 }
 // Get Notes
-export const GetNotes = async (): Promise<Response> => {
-  const { userSub, apikey, noteModuleKey } = getSecrets()
+export const GetNotes = async (userSub: string, apikey: string, noteModuleKey: string): Promise<Response> => {
+  // const { userSub, apikey, noteModuleKey } = getSecrets()
 
   const res = await fetch(`https://${userSub}.daftra.com/v2/api/entity/${noteModuleKey}/list?per_page=100000`, {
     headers: {

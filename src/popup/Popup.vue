@@ -1,9 +1,10 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import { GetUser } from '~/logic/dbSDK'
 import type { User } from '~/logic/types'
 import { getSecrets } from '~/logic/utils'
 
-const isConnected = ref<Boolean>()
+const isConnected = ref<Boolean>(true)
 const bizName = ref<String>('')
 // const currtheme = ref<String>('')
 // const currLang = ref<String>('')
@@ -16,10 +17,10 @@ onMounted(async () => {
   // currLang.value = lang
   // isConnected.value = connectionStatus
   const user: User = await GetUser('email', userEmail)
-  if (user.total > 0) {
-    isConnected.value = true
-    color.value = isConnected.value ? 'text-emerald-500' : 'text-red-500'
-  }
+  if (+user.total === 0)
+    isConnected.value = false
+  color.value = isConnected.value ? 'text-emerald-500' : 'text-red-500'
+  chrome.storage.sync.set({ conn: isConnected.value, email: userEmail })
 })
 
 const openOptionsPage = () => {

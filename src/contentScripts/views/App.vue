@@ -1,28 +1,34 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import 'uno.css'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import newNoteSound from '../../assets/sound effects/newNote.mp3'
-import notes from '../../fakedata'
+// import notes from '../../fakedata'
 import { CreateNote, GetNotes } from '../../logic/daftraApi'
-import { currPageNotes, getSecrets } from '../../logic/utils'
+// import { currPageNotes } from '../../logic/utils'
 import type { Note, NoteDataApi, User } from '../../logic/types'
 import { GetUser } from '~/logic/dbSDK'
 
 const tabs = ref<any>('recently-added')
 const filtered = ref<Note[]>([])
-const apiNotes = ref<Note[]>([])
+const apiNotes = ref<any>([])
+// const apiNotes = ref<Note[]>([])
 
-filtered.value = currPageNotes(notes)
+// filtered.value = currPageNotes(notes)
 
 const noteTextarea = ref<HTMLTextAreaElement>()
+// const placeholder = ref<string>('')
 const notingDisabled = ref<boolean>(true)
-const userSubb = ref<string>('')
 const apikey = ref<string>('')
+const subD = ref<string>('')
 const moduleKey = ref<string>('')
 const form = ref<HTMLFormElement>()
 const isLoading = ref<boolean>(false)
+const loadingNotes = ref<boolean>(false)
 const drawer = ref<boolean>(false)
 const newNote = ref<string>('')
+const userE = ref<any>('')
+const isConnected = ref<any>(true)
 
 const toggleDrawer = (): void => {
   drawer.value = !drawer.value
@@ -30,20 +36,32 @@ const toggleDrawer = (): void => {
 }
 
 onMounted(async () => {
-  const { userEmail, userSub } = getSecrets()
+  loadingNotes.value = true
+  // const { userEmail, userSub } = getSecrets()
+  function getStorageValuePromise(key: string) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get(key, resolve)
+    })
+  }
 
-  // isConnected.value = connectionStatus
-  const user: User = await GetUser('email', userEmail)
-  // eslint-disable-next-line no-console
-  console.log(user)
-  if (!user.total > 0)
+  const chromeStorage1: any = await getStorageValuePromise('conn')
+  const chromeStorage2: any = await getStorageValuePromise('email')
+  isConnected.value = chromeStorage1.conn
+  userE.value = chromeStorage2.email
+  if (isConnected && userE.value) {
+    const user: User = await GetUser('email', userE.value)
+    console.log(user)
     notingDisabled.value = false
-
-  userSubb.value = userSub
-  moduleKey.value = user.documents[0].noteModuleKey
-  apikey.value = user.documents[0].apikey
-  const allNotes = await GetNotes()
-  apiNotes.value = allNotes.data
+    moduleKey.value = user.documents[0].note_module_key
+    apikey.value = user.documents[0].api_key
+    subD.value = user.documents[0].subdomain
+    console.log(apikey.value, moduleKey.value)
+    const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
+    const allNotes = await allNotesReq.json()
+    apiNotes.value = allNotes.data
+    console.log(apiNotes.value)
+    loadingNotes.value = false
+  }
 })
 const addNote = (): void => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
@@ -61,7 +79,7 @@ const addNote = (): void => {
   }
   const msgSound: any = new Audio(newNoteSound)
   msgSound.play()
-  const secrets: any = { userSubb, moduleKey, apikey }
+  const secrets: any = { userSub: subD.value, noteModuleKey: moduleKey.value, apikey: apikey.value }
   CreateNote(secrets, data)
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(data))
@@ -124,15 +142,22 @@ whenever(keys['='], () => {
           <v-window-item
             value="page-notes"
           >
-            <v-container class="!bg-slate-100 !bg-opacity-2">
+            <v-container class="!bg-slate-100 !bg-opacity-2 text-center min-h-lg">
+              <v-progress-circular v-show="loadingNotes" color="white" indeterminate />
               <v-row no-gutters>
                 <v-col
-                  v-for="note in filtered.slice(0, 2)"
+                  v-for="note in apiNotes"
                   :key="note.id"
                   cols="6"
                   sm="4"
                 >
-                  <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+                  <v-text v-if="!isConnected && !userE" class="text-3xl font-bold">
+                    Please Connect to start using the app...
+                  </v-text>
+                  <v-text v-if="!isConnected && apiNotes.length === 0" class="text-3xl font-bold">
+                    You don't have any notes to display, start noting..
+                  </v-text>
+                  <VueCompact v-if="isConnected && userE" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
                 </v-col>
               </v-row>
             </v-container>
@@ -140,15 +165,23 @@ whenever(keys['='], () => {
           <v-window-item
             value="recently-added"
           >
-            <v-container class="!bg-slate-100 !bg-opacity-2">
+            <v-container class="!bg-slate-100 !bg-opacity-2 text-center min-h-lg">
+              <v-progress-circular v-show="loadingNotes" color="white" indeterminate />
+
               <v-row no-gutters>
                 <v-col
-                  v-for="note in apiNotes.slice(0, 6)"
+                  v-for="note in apiNotes"
                   :key="note.id"
                   cols="6"
                   sm="4"
                 >
-                  <VueCompact class="m-2" :body="note.body" :author="note.author" :date="note.date" :path="note.path" />
+                  <v-text v-if="!isConnected && !userE">
+                    Please Connect to start using the app...
+                  </v-text>
+                  <v-text v-if="isConnected && apiNotes.length === 0">
+                    You don't have any notes to display, start noting..
+                  </v-text>
+                  <VueCompact v-if="isConnected && userE" :loading="loadingNotes" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
                 </v-col>
               </v-row>
             </v-container>

@@ -58,15 +58,16 @@ async function submit() {
   returnedError.value = ''
   loading.value = true
   const connecedSound = new Audio(connectSound)
-  const { apikey, userSub, userEmail } = userSecrets.value
-  if (userEmail === getSecrets().userEmail && userSub === getSecrets().userSub) {
-  }
+  const { apikey, userSub } = userSecrets.value
+  // if (userEmail === getSecrets().userEmail && userSub === getSecrets().userSub) {
+  // }
   const user: User = await GetUser('subdomain', userSub)
   console.log('existing user: ', user)
   if (+user.total === 0) {
     // Site info based on user inputs - if user does not exist
     // if (!user.ok) {
-    const siteData = await GetSiteInfo({ userSub, apikey })
+    // interface ResType { data: Record<string, unknown>}
+    const siteData: any = await GetSiteInfo({ userSub, apikey })
     if (!siteData.ok) {
       loading.value = false
       userSecrets.value.userSub = ''
@@ -85,11 +86,11 @@ async function submit() {
       console.log(err, 'Something went wrong! Please try again')
     }
     // Fetching module entity_key
-    const moduleKey = await GetAllWorkflows({ userSub, apikey })
+    const moduleKey: any = await GetAllWorkflows({ userSub, apikey })
     userSecrets.value.noteModuleKey = moduleKey.data[0].entity_key
 
     const userCreated = await CreateUser({ daftra_site_id: `${id}`, business_name, first_name, last_name, subdomain: subdomain.split('.')[0], address1, address2, city, state, phone1, phone2, lang: 'en', country_code, currency_code, email, bn1, api_key: userSecrets.value.apikey, note_module_key: userSecrets.value.noteModuleKey, prefer_dark: true })
-
+    console.log(userCreated)
     connecedSound.play()
     setSecrets(userSecrets.value)
     console.log('user created successfully')
