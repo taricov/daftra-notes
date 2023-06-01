@@ -30,7 +30,7 @@ const dateFrom = ref()
 const dateTo = ref()
 
 // const filterNotes = () => {
-//   return Array(Math.floor(Math.random() * 100))
+//   return
 // }
 
 const openSettings = ref<boolean>(false)
@@ -256,6 +256,7 @@ onMounted(async () => {
         <div class="opacity-90 mb-4 text-left mx-3 transition duration-300">
           {{ `${filteredNotes.length}/${apiNotes.length}` }}
         </div>
+        <v-progress-circular v-show="loadingNotes" indeterminate color="green" />
 
         <v-row no-gutters>
           <v-col
@@ -264,9 +265,7 @@ onMounted(async () => {
             cols="12"
             sm="4"
           >
-            <v-progress-circular v-show="loadingNotes" indeterminate color="white" />
-
-            <VueCard v-if="businessNameKnown" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+            <VueCard v-if="businessNameKnown" class="m-2" :num="apiNotes.indexOf(note) + 1" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
             <!-- <VueCard class="m-2" :num="+note.id" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
           </v-col>
         </v-row>

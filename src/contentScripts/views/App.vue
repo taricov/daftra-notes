@@ -143,7 +143,7 @@ whenever(keys['='], () => {
             value="page-notes"
           >
             <v-container class="!bg-slate-100 !bg-opacity-2 text-center min-h-lg">
-              <v-progress-circular v-show="loadingNotes" color="white" indeterminate />
+              <v-progress-circular v-show="loadingNotes" color="green" indeterminate />
               <v-row no-gutters>
                 <v-col
                   v-for="note in apiNotes"
@@ -166,7 +166,7 @@ whenever(keys['='], () => {
             value="recently-added"
           >
             <v-container class="!bg-slate-100 !bg-opacity-2 text-center min-h-lg">
-              <v-progress-circular v-show="loadingNotes" color="white" indeterminate />
+              <v-progress-circular v-show="loadingNotes" color="green" indeterminate />
 
               <v-row no-gutters>
                 <v-col
