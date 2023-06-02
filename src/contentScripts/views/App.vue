@@ -1,14 +1,14 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import 'uno.css'
-import { useMagicKeys, whenever } from '@vueuse/core'
+import { useClipboard, useMagicKeys, whenever } from '@vueuse/core'
 import newNoteSound from '../../assets/sound effects/newNote.mp3'
 // import notes from '../../fakedata'
 import { CreateNote, GetNotes } from '../../logic/daftraApi'
 // import { currPageNotes } from '../../logic/utils'
 import type { NoteDataApi, User } from '../../logic/types'
 import { GetUser } from '~/logic/dbSDK'
-import { extractPath } from '~/logic/utils'
+import { extractBody, extractPath } from '~/logic/utils'
 
 const tabs = ref<any>('recently-added')
 // const filtered = ref<Note[]>([])
@@ -27,9 +27,11 @@ const form = ref<HTMLFormElement>()
 const isLoading = ref<boolean>(false)
 const loadingNotes = ref<boolean>(false)
 const drawer = ref<boolean>(false)
-const newNote = ref<string>('')
+const newNote = ref<any>('')
+// const newNote = ref<string | ComputedRef<string>>('')
 const userE = ref<any>('')
 const isConnected = ref<any>(true)
+const renderError = ref<string | null>(null)
 
 const toggleDrawer = (): void => {
   drawer.value = !drawer.value
@@ -69,20 +71,30 @@ onMounted(async () => {
     apiNotes.value = allNotes.data
     // console.log(apiNotes.value)
     loadingNotes.value = false
+    renderError.value = 'Adding Note Failed!'
+    setTimeout(() => {
+      renderError.value = null
+    }, 10000)
   }
 })
 
 const addNote = async (): Promise<void> => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
+  // const { text, copy, copied } = useClipboard(newNote)
+
+  const VClipboard = useClipboard()
+  VClipboard.copy(newNote.value)
+  form.value?.reset()
   const today = new Date()
   const formattedToday = today.toISOString().split('T')[0]
+  const noteNun = apiNotes.length + 1
   const thisPath: string = window.location.pathname
   const data: NoteDataApi = {
     number: {
       generated: '1',
       code: '1',
     },
-    title: `Note no. ${apiNotes.length + 1}`,
+    title: `Note no. ${noteNun}`,
     start_date: formattedToday,
     description: `${newNote.value}|path:${thisPath}`,
     staff_id: '0',
@@ -93,14 +105,15 @@ const addNote = async (): Promise<void> => {
   loadingNotes.value = true
   const secrets: any = { userSub: subD.value, noteModuleKey: moduleKey.value, apikey: apikey.value }
   const sendNote = await CreateNote(secrets, data)
-  console.log(JSON.stringify(data))
   console.log(sendNote)
+  // console.log(JSON.stringify(data))
+  if (!sendNote.ok)
+    newNote.value = VClipboard.text
+
   const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
   const allNotes = await allNotesReq.json()
   apiNotes.value = allNotes.data
   loadingNotes.value = false
-
-  form.value?.reset()
 }
 
 const keys = useMagicKeys()
@@ -110,6 +123,7 @@ whenever(keys['alt+≠'], () => {
 whenever(keys['='], () => {
   drawer.value = true
   noteTextarea.value?.focus()
+  newNote.value = ''
 })
 </script>
 
@@ -164,7 +178,10 @@ whenever(keys['='], () => {
             value="page-notes"
           >
             <v-container class="!bg-slate-100 !bg-opacity-2 text-center min-h-lg">
-              <v-progress-circular v-show="loadingNotes" color="green" indeterminate />
+              <!-- <v-progress-circular v-show="loadingNotes" color="green" indeterminate /> -->
+              <p v-show="renderError !== null" class="w-full text-center text-red-500 font-semibold">
+                {{ renderError }}
+              </p>
               <v-row no-gutters>
                 <v-col
                   v-for="note in thisPageNotes()"
@@ -178,7 +195,7 @@ whenever(keys['='], () => {
                   <v-text v-if="!isConnected && apiNotes.length === 0" class="text-3xl font-bold">
                     You don't have any notes to display, start noting..
                   </v-text>
-                  <VueCompact v-if="isConnected && userE" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+                  <VueCompact v-if="isConnected && userE" class="m-2" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
                 </v-col>
               </v-row>
             </v-container>
@@ -191,7 +208,7 @@ whenever(keys['='], () => {
 
               <v-row no-gutters>
                 <v-col
-                  v-for="note in apiNotes.slice(-6)"
+                  v-for="note in apiNotes.slice(0, 6)"
                   :key="note.id"
                   cols="6"
                   sm="4"
@@ -202,7 +219,7 @@ whenever(keys['='], () => {
                   <v-text v-if="isConnected && apiNotes.length === 0">
                     You don't have any notes to display, start noting..
                   </v-text>
-                  <VueCompact v-if="isConnected && userE" :loading="loadingNotes" class="m-2" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+                  <VueCompact v-if="isConnected && userE" class="m-2" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
                 </v-col>
               </v-row>
             </v-container>

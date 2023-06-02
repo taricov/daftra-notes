@@ -36,14 +36,14 @@ let editedNote: any
       <v-chip class="text-md my-2">
         {{ date }}
       </v-chip>
-      <p class="text-md px-3 py-2 line-clamp-3">
+      <p class="text-md h-15 px-3 py-2 my-2 line-clamp-3">
         {{ body }}
       </p>
       <div class="space-x-2 space-y-1">
         <!-- <span v-for="tag in tags" :key="tag" class="inline-flex items-center rounded-full border-1 border-opacity-10 px-2 py-1 text-sm font-semibold text-heading shadow-sm">
           {{ tag }}
         </span> -->
-        <v-chip v-for="tag in tags" :key="tag" variant="elevated" class="!bg-sky-400 !bg-opacity-20 !text-sky-200 !text-xs">
+        <v-chip v-for="tag in tags" :key="tag" variant="elevated" class="!bg-sky-100 !bg-opacity-5 !text-sky-200 !text-xs">
           {{ tag }}
         </v-chip>
       </div>

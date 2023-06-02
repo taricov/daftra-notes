@@ -18,10 +18,10 @@ const userE = ref<any>('')
 const isConnected = ref<any>(true)
 const allTags = ref<String[]>(['work', 'invoice', 'inquiry', 'new hire'])
 const allColors = ref<Array<{ label: String; afterEl: String }>>([
-  { label: 'red', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-red-400 relative' },
-  { label: 'green', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-green-400 relative' },
-  { label: 'blue', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-blue-400 relative' },
-  { label: 'yellow', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:absolute after:rounded-full after:bg-yellow-400 relative' },
+  { label: 'red', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:relative after:rounded-full after:bg-red-400 relative' },
+  { label: 'green', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:relative after:rounded-full after:bg-green-400 relative' },
+  { label: 'blue', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:relative after:rounded-full after:bg-blue-400 relative' },
+  { label: 'yellow', afterEl: 'after:content-[""] after:top-2/6 after:right-5/8 after:w-3 after-h-3 after:relative after:rounded-full after:bg-yellow-400 relative' },
 ])
 const selectedColors = ref<String[]>([])
 const allPeriods = ref<String[]>(['Last Hour', 'Yesterday', 'Last 5 days', 'Last Week', 'Last 30 days'])
@@ -66,9 +66,8 @@ const businessNameKnown = ref<string | null>(null)
 //   const body = desc.split('|path:')[0].replace(':', '')
 //   return body
 // }
-
 const totalPages = () => {
-  console.log(Math.ceil(+notesLen.value / +notesPerPage.value))
+  // console.log(Math.ceil(+notesLen.value / +notesPerPage.value))
   return Math.ceil(+notesLen.value / +notesPerPage.value)
 }
 const paginatedData = () => {
@@ -78,6 +77,7 @@ const paginatedData = () => {
 }
 
 onMounted(async () => {
+  loadingNotes.value = true
   function getStorageValuePromise(key: string) {
     return new Promise((resolve) => {
       chrome.storage.sync.get(key, resolve)
@@ -89,24 +89,23 @@ onMounted(async () => {
 
   isConnected.value = chromeStorage1.conn
   userE.value = chromeStorage2.email
-  console.log(userE.value, isConnected.value)
+  // console.log(userE.value, isConnected.value)
   // const { userEmail, noteModuleKey, userSub, apikey } = getSecrets()
-  loadingNotes.value = true
   if (isConnected && userE.value) {
     const user: User = await GetUser('email', userE.value)
-    console.log(user.documents[0])
+    // console.log(user.documents[0])
     moduleKey.value = user.documents[0].note_module_key
     apikey.value = user.documents[0].api_key
     subD.value = user.documents[0].subdomain
     businessNameKnown.value = user.documents[0].subdomain || null
-    console.log(apikey.value, moduleKey.value)
+    // console.log(apikey.value, moduleKey.value)
     const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
     const allNotes = await allNotesReq.json()
     apiNotes.value = allNotes.data
     notesLen.value = apiNotes.value.length
     totalPages()
 
-    console.log(apiNotes.value)
+    // console.log(apiNotes.value)
     loadingNotes.value = false
   }
   // filteredNotes.value = filterNotes()
@@ -292,7 +291,7 @@ onMounted(async () => {
 
       <v-container v-if="businessNameKnown" class="relative !bg-slate-100 !bg-opacity-2">
         <div class="opacity-90 mb-4 text-left mx-3 transition duration-300">
-          {{ `${filteredNotes.length}/${apiNotes.length}` }}
+          {{ `${notesPerPage}/${apiNotes.length}` }}
         </div>
         <v-progress-circular v-show="loadingNotes" indeterminate color="green" />
 
@@ -303,7 +302,7 @@ onMounted(async () => {
             cols="12"
             sm="4"
           >
-            <VueCard v-if="businessNameKnown" class="m-2" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="extractPath(note.description)" />
+            <VueCard v-if="businessNameKnown" class="m-2 h-full" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="extractPath(note.description)" />
           </v-col>
         </v-row>
       </v-container>
@@ -321,6 +320,7 @@ onMounted(async () => {
       </v-container>
       <div class="text-center">
         <v-pagination
+          v-if="apiNotes.length > 0"
           v-model="page"
           class="text-slate-400 !text-xs"
           :length="totalPages()"
