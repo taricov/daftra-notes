@@ -7,6 +7,9 @@ import { GetNotes } from '~/logic/daftraApi'
 import { GetUser } from '~/logic/dbSDK'
 
 const page = ref<Number>(1)
+const notesPerPage = ref<Number>(3)
+const notesLen = ref<Number>(0)
+
 const apiNotes = ref<any>([])
 const filteredNotes = ref<Note[]>([])
 const loadingNotes = ref<Boolean>(false)
@@ -63,9 +66,13 @@ const extractTags = (body: string): string[] => {
 //   return body
 // }
 
+const totalPages = () => {
+  console.log(Math.ceil(+notesLen.value / +notesPerPage.value))
+  return Math.ceil(+notesLen.value / +notesPerPage.value)
+}
 const paginatedData = () => {
-  const start = (+page.value - 1) * 3
-  const end = start + 3
+  const start = (+page.value - 1) * +notesPerPage.value
+  const end = start + +notesPerPage.value
   return apiNotes.value.slice(start, end)
 }
 
@@ -95,6 +102,9 @@ onMounted(async () => {
     const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
     const allNotes = await allNotesReq.json()
     apiNotes.value = allNotes.data
+    notesLen.value = apiNotes.value.length
+    totalPages()
+
     console.log(apiNotes.value)
     loadingNotes.value = false
   }
@@ -293,7 +303,6 @@ onMounted(async () => {
             sm="4"
           >
             <VueCard v-if="businessNameKnown" class="m-2" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="extractPath(note.description)" />
-            <!-- <VueCard class="m-2" :num="+note.id" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
           </v-col>
         </v-row>
       </v-container>
@@ -313,8 +322,7 @@ onMounted(async () => {
         <v-pagination
           v-model="page"
           class="text-slate-400 !text-xs"
-          :length="5"
-          :total-visible="4"
+          :length="totalPages()"
         />
       </div>
     </main>
