@@ -48,5 +48,14 @@ export const extractTags = (body: string): string[] => {
   const regex = /#\s*([a-zA-Z]+)/g
   const matches = Array.from(body.matchAll(regex), match => match[0])
   const _matches = matches.filter(word => /^#[a-zA-Z]/.test(word)).map(word => word.slice(1))
+  console.log(`matches: ${_matches}`)
   return _matches
+}
+
+export const extractColor = (desc: string): string => {
+  const regex = /_\w+/g
+  const noteBody = desc.split('|path:')[0]
+  const color = noteBody.match(regex) !== null ? noteBody.match(regex)![0].slice(1) : 'white'
+  console.log(color)
+  return color
 }

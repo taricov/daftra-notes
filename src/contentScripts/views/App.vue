@@ -8,7 +8,7 @@ import { CreateNote, GetNotes } from '../../logic/daftraApi'
 // import { currPageNotes } from '../../logic/utils'
 import type { NoteDataApi, User } from '../../logic/types'
 import { GetUser } from '~/logic/dbSDK'
-import { extractBody, extractPath } from '~/logic/utils'
+import { extractBody, extractColor, extractPath } from '~/logic/utils'
 
 const tabs = ref<any>('recently-added')
 // const filtered = ref<Note[]>([])
@@ -71,23 +71,17 @@ onMounted(async () => {
     apiNotes.value = allNotes.data
     // console.log(apiNotes.value)
     loadingNotes.value = false
-    renderError.value = 'Adding Note Failed!'
-    setTimeout(() => {
-      renderError.value = null
-    }, 10000)
   }
 })
 
 const addNote = async (): Promise<void> => {
-  // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
-  // const { text, copy, copied } = useClipboard(newNote)
-
   const VClipboard = useClipboard()
   VClipboard.copy(newNote.value)
+  console.log(VClipboard.text)
   form.value?.reset()
   const today = new Date()
   const formattedToday = today.toISOString().split('T')[0]
-  const noteNun = apiNotes.length + 1
+  const noteNun = apiNotes.value.length + 1
   const thisPath: string = window.location.pathname
   const data: NoteDataApi = {
     number: {
@@ -107,9 +101,13 @@ const addNote = async (): Promise<void> => {
   const sendNote = await CreateNote(secrets, data)
   console.log(sendNote)
   // console.log(JSON.stringify(data))
-  if (!sendNote.ok)
+  if (!sendNote.ok) {
+    renderError.value = 'Adding Note Failed!'
+    setTimeout(() => {
+      renderError.value = null
+    }, 10000)
     newNote.value = VClipboard.text
-
+  }
   const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
   const allNotes = await allNotesReq.json()
   apiNotes.value = allNotes.data
@@ -117,19 +115,22 @@ const addNote = async (): Promise<void> => {
 }
 
 const keys = useMagicKeys()
-whenever(keys['alt+≠'], () => {
+whenever(keys.escape, () => {
   drawer.value = false
 })
-whenever(keys['='], () => {
+whenever(keys['\\'], () => {
   drawer.value = true
-  noteTextarea.value?.focus()
+  console.log('before', newNote.value)
+  newNote.value = 'Hello....'
+  console.log('after', newNote.value)
+  // noteTextarea.value?.focus()
   newNote.value = ''
 })
 </script>
 
 <template>
   <div
-    class="group fixed flex items-center justify-center right-0 bottom-0 m-5 z-100 font-sans select-none leading-1em w-10 h-10 rounded-full shadow cursor-pointer bg-[#21a6a7] hover:bg-opacity-90 transition-all duration-300"
+    class="group fixed flex items-center justify-center right-0 bottom-0 m-5 z-100 font-sans select-none leading-1em w-10 h-10 rounded-full shadow cursor-pointer bg-[#21a6a7] hover:bg-opacity-90 transition-all duration-300 !z-[100000]"
     @click="toggleDrawer"
   >
     <svg class="w-[1.5rem] mt-[3px] ml-[5px] fill-sky-900 group-hover:fill-sky-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 118.06 116.67"><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M0,41.38V101.2H43.71V78.32c-1.54.13-3.16.2-4.88.2H26.36V22.68H38.83q27.93,0,27.93,27.35H93.12q0-23.41-13.18-36.71T43.51,0H0V41.38" /><path class="cls-1" d="M44.17,74.2V53.1h6.19l3.56,13v-13h5.15V74.2H53l-3.69-13v13Z" /><path class="cls-1" d="M74.56,66.22A11.31,11.31,0,0,1,73.4,72q-1.56,2.63-5.64,2.63-4.26,0-5.74-2.48Q61,70.36,61,66.19a11.3,11.3,0,0,1,1.15-5.76q1.57-2.62,5.65-2.63c2.83,0,4.75.83,5.73,2.48Q74.56,62.07,74.56,66.22Zm-8.28,0c0,1.68,0,2.64.06,2.9.18,1.38.65,2.07,1.42,2.07s1.24-.69,1.42-2.07c0-.27.06-1.24.06-2.9s0-2.65-.06-2.92c-.18-1.38-.65-2.07-1.42-2.07s-1.24.7-1.42,2.1C66.3,63.58,66.28,64.55,66.28,66.22Z" /><path class="cls-1" d="M75.21,61.79V58.21H77V53.49H82.3v4.72h2.1v3.58H82.3v7.65a1.11,1.11,0,0,0,1.27,1.25h.83v3.54a23.52,23.52,0,0,1-2.9.18A6,6,0,0,1,78,73.7c-.69-.55-1-1.68-1-3.38V61.79Z" /><path class="cls-1" d="M98.26,67.11H90.37v2.1c0,1.44.48,2.16,1.43,2.16s1.49-.93,1.49-2.78h4.79q-.09,6-6.25,6-3.81,0-5.29-1.89c-1-1.26-1.49-3.43-1.49-6.51s.53-5.19,1.59-6.48,2.8-1.94,5.21-1.94c2.2,0,3.81.55,4.81,1.66s1.6,3.21,1.6,6Zm-5-2.9v-.7q0-2.46-1.47-2.46c-1,0-1.45.82-1.45,2.46v.7Z" /><path class="cls-1" d="M99.18,69.24h4.67a2.64,2.64,0,0,0,.4,1.6,1.3,1.3,0,0,0,1.1.53,1.7,1.7,0,0,0,1.1-.37,1.25,1.25,0,0,0,.44-1c0-.73-.67-1.32-2-1.78a22.46,22.46,0,0,1-3.69-1.5,4.83,4.83,0,0,1-.45-7.48,7.12,7.12,0,0,1,4.79-1.45q6,0,6,5h-4.61c0-1.19-.47-1.78-1.42-1.78s-1.36.42-1.36,1.24.67,1.22,2,1.63a16.39,16.39,0,0,1,3.7,1.42,4.32,4.32,0,0,1,2,3.93,4.87,4.87,0,0,1-1.69,3.84,7,7,0,0,1-4.73,1.51C101.26,74.62,99.18,72.83,99.18,69.24Z" /></g></g></svg>
@@ -145,7 +146,7 @@ whenever(keys['='], () => {
       elevation="9"
       location="right"
       temporary
-      class="!bg-gray-900 py-3 px-1"
+      class="!bg-gray-900 py-3 px-1 !z-[100000]"
     >
       <v-container>
         <h3 class="text-left text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-xl font-extrabold md:text-xl lg:text-3xl dark:text-white">
@@ -219,7 +220,7 @@ whenever(keys['='], () => {
                   <v-text v-if="isConnected && apiNotes.length === 0">
                     You don't have any notes to display, start noting..
                   </v-text>
-                  <VueCompact v-if="isConnected && userE" class="m-2" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+                  <VueCompact v-if="isConnected && userE" class="m-2" :color="extractColor(note.description)" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
                 </v-col>
               </v-row>
             </v-container>

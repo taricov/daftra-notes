@@ -302,7 +302,7 @@ onMounted(async () => {
             cols="12"
             sm="4"
           >
-            <VueCard v-if="businessNameKnown" class="m-2 h-full" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="extractPath(note.description)" />
+            <VueCard v-if="businessNameKnown" class="m-2 h-full" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="`https://${subD}.daftra.com${extractPath(note.description)}`" />
           </v-col>
         </v-row>
       </v-container>

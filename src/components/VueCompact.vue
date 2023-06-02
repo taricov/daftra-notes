@@ -4,13 +4,17 @@ defineProps({
   author: String,
   date: String,
   body: String,
+  color: String,
 })
+
+// :style="{ 'background-color': color }"
+// const thisCardColor = `!bg-[${props.color}]`
 </script>
 
 <template>
   <v-card
     variant="tonal"
-    class="!bg-slate-900 !text-slate-300 !transition-all duration-300 shadow-lg hover:-translate-y-1 transform px-1 py-2 text-center"
+    class="!bg-opacity-10 !text-slate-300 !transition-all duration-300 shadow-lg hover:-translate-y-1 transform px-1 py-2 text-center"
   >
     <p class="text-md font-semibold">
       {{ author }}
@@ -21,7 +25,7 @@ defineProps({
     <v-chip class="text-xs my-2 ">
       {{ date }}
     </v-chip>
-    <p class="text-sm px-3 pb-10 line-clamp-1">
+    <p class="text-sm px-3 pb-1 line-clamp-3">
       {{ body }}
     </p>
 
