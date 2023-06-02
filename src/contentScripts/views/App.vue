@@ -8,6 +8,7 @@ import { CreateNote, GetNotes } from '../../logic/daftraApi'
 // import { currPageNotes } from '../../logic/utils'
 import type { NoteDataApi, User } from '../../logic/types'
 import { GetUser } from '~/logic/dbSDK'
+import { extractPath } from '~/logic/utils'
 
 const tabs = ref<any>('recently-added')
 // const filtered = ref<Note[]>([])
@@ -35,7 +36,14 @@ const toggleDrawer = (): void => {
   noteTextarea.value?.focus()
 }
 
+const thisPageNotes = () => {
+  const thisPath = window.location.pathname
+  return apiNotes.value.filter(n =>
+    extractPath(n.description) === thisPath)
+}
+
 onMounted(async () => {
+  thisPageNotes()
   loadingNotes.value = true
   // const { userEmail, userSub } = getSecrets()
   function getStorageValuePromise(key: string) {
@@ -63,6 +71,7 @@ onMounted(async () => {
     loadingNotes.value = false
   }
 })
+
 const addNote = async (): Promise<void> => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
   const today = new Date()
@@ -158,7 +167,7 @@ whenever(keys['='], () => {
               <v-progress-circular v-show="loadingNotes" color="green" indeterminate />
               <v-row no-gutters>
                 <v-col
-                  v-for="note in apiNotes"
+                  v-for="note in thisPageNotes()"
                   :key="note.id"
                   cols="6"
                   sm="4"
@@ -182,7 +191,7 @@ whenever(keys['='], () => {
 
               <v-row no-gutters>
                 <v-col
-                  v-for="note in apiNotes"
+                  v-for="note in apiNotes.slice(-6)"
                   :key="note.id"
                   cols="6"
                   sm="4"

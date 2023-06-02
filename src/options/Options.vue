@@ -5,6 +5,7 @@ import 'vuetify/styles'
 import type { Note, User } from '~/logic/types'
 import { GetNotes } from '~/logic/daftraApi'
 import { GetUser } from '~/logic/dbSDK'
+import { extractBody, extractPath, extractTags } from '~/logic/utils'
 
 const page = ref<Number>(1)
 const notesPerPage = ref<Number>(3)
@@ -46,20 +47,20 @@ const businessNameKnown = ref<string | null>(null)
 // const currtheme = ref<string | null>(null)
 // const currLang = ref<string>('en')
 
-const extractPath = (desc: string): string => {
-  const path = desc.split('|path:')[1]
-  return path === '/' ? '/dashboard' : path
-}
-const extractBody = (desc: string): string => {
-  const body = desc.split('|path:')[0].replace(':', '')
-  return body
-}
-const extractTags = (body: string): string[] => {
-  const regex = /:\s*([a-zA-Z]+)/g
-  const matches = Array.from(body.matchAll(regex), match => match[0])
-  const _matches = matches.filter(word => /^:[a-zA-Z]/.test(word)).map(word => word.slice(1))
-  return _matches
-}
+// const extractPath = (desc: string): string => {
+//   const path = desc.split('|path:')[1]
+//   return path === '/' ? '/dashboard' : path
+// }
+// const extractBody = (desc: string): string => {
+//   const body = desc.split('|path:')[0].replace(':', '')
+//   return body
+// }
+// const extractTags = (body: string): string[] => {
+//   const regex = /:\s*([a-zA-Z]+)/g
+//   const matches = Array.from(body.matchAll(regex), match => match[0])
+//   const _matches = matches.filter(word => /^:[a-zA-Z]/.test(word)).map(word => word.slice(1))
+//   return _matches
+// }
 
 // const extractColor = (desc: string): string => {
 //   const body = desc.split('|path:')[0].replace(':', '')
