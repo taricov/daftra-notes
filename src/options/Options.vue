@@ -6,6 +6,7 @@ import type { Note, User } from '~/logic/types'
 import { GetNotes } from '~/logic/daftraApi'
 import { GetUser } from '~/logic/dbSDK'
 
+const page = ref<Number>(1)
 const apiNotes = ref<any>([])
 const filteredNotes = ref<Note[]>([])
 const loadingNotes = ref<Boolean>(false)
@@ -41,6 +42,32 @@ function openSettingsFn() {
 const businessNameKnown = ref<string | null>(null)
 // const currtheme = ref<string | null>(null)
 // const currLang = ref<string>('en')
+
+const extractPath = (desc: string): string => {
+  const path = desc.split('|path:')[1]
+  return path === '/' ? '/dashboard' : path
+}
+const extractBody = (desc: string): string => {
+  const body = desc.split('|path:')[0].replace(':', '')
+  return body
+}
+const extractTags = (body: string): string[] => {
+  const regex = /:\s*([a-zA-Z]+)/g
+  const matches = Array.from(body.matchAll(regex), match => match[0])
+  const _matches = matches.filter(word => /^:[a-zA-Z]/.test(word)).map(word => word.slice(1))
+  return _matches
+}
+
+// const extractColor = (desc: string): string => {
+//   const body = desc.split('|path:')[0].replace(':', '')
+//   return body
+// }
+
+const paginatedData = () => {
+  const start = (+page.value - 1) * 3
+  const end = start + 3
+  return apiNotes.value.slice(start, end)
+}
 
 onMounted(async () => {
   function getStorageValuePromise(key: string) {
@@ -260,12 +287,12 @@ onMounted(async () => {
 
         <v-row no-gutters>
           <v-col
-            v-for="note in apiNotes"
+            v-for="note in paginatedData()"
             :key="note.id"
             cols="12"
             sm="4"
           >
-            <VueCard v-if="businessNameKnown" class="m-2" :num="apiNotes.indexOf(note) + 1" :body="note.description" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :date="note.start_date" :path="note.description.split('[path]')[1]" />
+            <VueCard v-if="businessNameKnown" class="m-2" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="extractPath(note.description)" />
             <!-- <VueCard class="m-2" :num="+note.id" :body="note.body" :author="note.author" :date="note.date" :path="note.path" /> -->
           </v-col>
         </v-row>
@@ -282,6 +309,14 @@ onMounted(async () => {
           Not Connected!
         </div>
       </v-container>
+      <div class="text-center">
+        <v-pagination
+          v-model="page"
+          class="text-slate-400 !text-xs"
+          :length="5"
+          :total-visible="4"
+        />
+      </div>
     </main>
   </v-app>
 </template>

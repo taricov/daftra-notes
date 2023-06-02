@@ -67,7 +67,7 @@ export const CreateNote = async ({ userSub, noteModuleKey, apikey }: Pick<Secret
 
   const res: Response = await fetch(`https://${userSub}.daftra.com/v2/api/entity/${noteModuleKey}`, {
     method: 'POST',
-    mode: 'no-cors',
+    // mode: 'no-cors',
     headers: {
       'Content-Type': 'application/json',
       'apikey': apikey,

@@ -6,6 +6,8 @@ defineProps({
   author: String,
   body: String,
   date: String,
+  tags: Array,
+  // color: String,
 })
 
 let editedNote: any
@@ -37,6 +39,9 @@ let editedNote: any
       <p class="text-md px-3 py-2">
         {{ body }}
       </p>
+      <v-chip v-for="tag in tags" :key="tag">
+        {{ tag }}
+      </v-chip>
     </v-container>
 
     <v-card-actions>
