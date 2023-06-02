@@ -1,6 +1,5 @@
 export interface NoteDataApi {
-  number: number
-  id: number
+  number: { code: string; generated: string }
   title: string
   start_date: string
   description: string

@@ -50,28 +50,30 @@ onMounted(async () => {
   userE.value = chromeStorage2.email
   if (isConnected && userE.value) {
     const user: User = await GetUser('email', userE.value)
-    console.log(user)
+    // console.log(user)
     notingDisabled.value = false
     moduleKey.value = user.documents[0].note_module_key
     apikey.value = user.documents[0].api_key
     subD.value = user.documents[0].subdomain
-    console.log(apikey.value, moduleKey.value)
+    // console.log(apikey.value, moduleKey.value)
     const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
     const allNotes = await allNotesReq.json()
     apiNotes.value = allNotes.data
-    console.log(apiNotes.value)
+    // console.log(apiNotes.value)
     loadingNotes.value = false
   }
 })
-const addNote = (): void => {
+const addNote = async (): Promise<void> => {
   // const { sub_domain, noteModuleKey, apiKey } = getSecrets()
   const today = new Date()
   const formattedToday = today.toISOString().split('T')[0]
   const thisPath: string = window.location.pathname
   const data: NoteDataApi = {
-    number: 1,
-    id: 1,
-    title: `Note no. ${[apiNotes].length}`,
+    number: {
+      generated: '1',
+      code: '1',
+    },
+    title: `Note no. ${apiNotes.length + 1}`,
     start_date: formattedToday,
     description: `${newNote.value}|path:${thisPath}`,
     staff_id: '0',
@@ -79,12 +81,19 @@ const addNote = (): void => {
   }
   const msgSound: any = new Audio(newNoteSound)
   msgSound.play()
+  loadingNotes.value = true
   const secrets: any = { userSub: subD.value, noteModuleKey: moduleKey.value, apikey: apikey.value }
-  CreateNote(secrets, data)
-  // eslint-disable-next-line no-console
+  const sendNote = await CreateNote(secrets, data)
   console.log(JSON.stringify(data))
+  console.log(sendNote)
+  const allNotesReq = await GetNotes(subD.value, apikey.value, moduleKey.value)
+  const allNotes = await allNotesReq.json()
+  apiNotes.value = allNotes.data
+  loadingNotes.value = false
+
   form.value?.reset()
 }
+
 const keys = useMagicKeys()
 whenever(keys['alt+≠'], () => {
   drawer.value = false
