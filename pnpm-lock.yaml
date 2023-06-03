@@ -39,6 +39,9 @@ devDependencies:
   '@mdi/font':
     specifier: ^7.2.96
     version: 7.2.96
+  '@mdi/js':
+    specifier: ^7.2.96
+    version: 7.2.96
   '@types/chrome':
     specifier: ^0.0.236
     version: 0.0.236
@@ -925,6 +928,10 @@ packages:
 
   /@mdi/font@7.2.96:
     resolution: {integrity: sha512-e//lmkmpFUMZKhmCY9zdjRe4zNXfbOIJnn6xveHbaV2kSw5aJ5dLXUxcRt1Gxfi7ZYpFLUWlkG2MGSFAiqAu7w==}
+    dev: true
+
+  /@mdi/js@7.2.96:
+    resolution: {integrity: sha512-paR9M9ZT7rKbh2boksNUynuSZMHhqRYnEZOm/KrZTjQ4/FzyhjLHuvw/8XYzP+E7fS4+/Ms/82EN1pl/OFsiIA==}
     dev: true
 
   /@mdn/browser-compat-data@5.2.29:

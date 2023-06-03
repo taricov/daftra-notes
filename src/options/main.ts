@@ -8,18 +8,18 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import App from './Options.vue'
 import { setupApp } from '~/logic/common-setup'
 
 const vuetify = createVuetify({
-  // icons: {
-  //   defaultSet: 'mdi',
-  // aliases: mdi.aliases,
-  // sets: {
-  //   mdi: mdi.mdi,
-  //   fa,
-  // },
-  // },
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
   components,
   directives,
 })

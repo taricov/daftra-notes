@@ -19,11 +19,14 @@ let editedNote: any
     class="group !bg-slate-900 !text-slate-300 !transition-all duration-300 shadow-lg hover:-translate-y-1 transform !z-10"
   >
     <div class="group-hover:opacity-100 opacity-30 mt-4 transition duration-300">
-      Note No. {{ num }}
+      {{ num }}
     </div>
-    <v-container class="hover:-translate-x-18 transition duration-300 overflow-hidden trasform absolute !w-fit -right-19 space-y-3 !p-0 bg-slate-50 bg-opacity-5 rounded flex items-center justify-center sapce-x-10 before:content-[''] before:w-2 before:h-8 before:bg-emerald-600">
+    <v-container class="hover:-translate-x-18 transition duration-300 overflow-hidden trasform absolute !w-fit -right-19 space-y-3 !p-0 bg-slate-50 bg-opacity-5 rounded flex items-center justify-center sapce-x-10 before:content-[''] before:w-2 before:h-8 before:bg-emerald-600 after:content-[''] after:w-full after:h-full after:absolute after:bg-slate-900 after:bg-opacity-50">
       <svg class="mx-3 cursor-pointer transition duration-150 hover:fill-emerald-600 fill-sky-400 w-5 p-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" @click="DeleteNote('0')"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>
       <svg class="!mt-0 mr-3 cursor-pointer transition duration-150  hover:fill-emerald-600 fill-sky-400 w-4 p-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" @click="UpdateNote('0', editedNote)"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+      <div variant="plain" class="z-20 rounded-full bg-gradient-to-r from-emerald-400 to-sky-600 text-slate-800 px-1 py-1 transform -translate-x-1/2 -translate-y-1/2 mx-0 !absolute !left-1/6 !-top-[1px] w-13 -rotate-40 text-[4px] font-bold">
+        Coming Soon
+      </div>
     </v-container>
 
     <v-container class="mt-5">

@@ -291,7 +291,7 @@ onMounted(async () => {
 
       <v-container v-if="businessNameKnown" class="relative !bg-slate-100 !bg-opacity-2">
         <div class="opacity-90 mb-4 text-left mx-3 transition duration-300">
-          {{ `${notesPerPage}/${apiNotes.length}` }}
+          {{ `${+notesPerPage * +page <= apiNotes.length ? +notesPerPage * +page : apiNotes.length}/${apiNotes.length}` }}
         </div>
         <v-progress-circular v-show="loadingNotes" indeterminate color="green" />
 
@@ -302,7 +302,7 @@ onMounted(async () => {
             cols="12"
             sm="4"
           >
-            <VueCard v-if="businessNameKnown" class="m-2 h-full" :num="apiNotes.indexOf(note) + 1" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="`https://${subD}.daftra.com${extractPath(note.description)}`" />
+            <VueCard v-if="businessNameKnown" class="m-2 h-full" :num="note.title" :body="extractBody(note.description)" :author="note.staff_id === 0 ? 'Admin' : `User ID: #${note.staff_id}`" :tags="extractTags(note.description)" :date="note.start_date" :path="`https://${subD}.daftra.com${extractPath(note.description)}`" />
           </v-col>
         </v-row>
       </v-container>
